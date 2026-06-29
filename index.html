@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Asteria's Chronicles - ΣΠΟΔΟΣ</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Playfair+Display:ital,wght=0,400;0,500;1,400&family=Pinyon+Script&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght=0,400;0,500;1,400&family=Pinyon+Script&display=swap');
 
         :root {
             --bg-color: #030508;
@@ -418,6 +418,16 @@
             cursor: pointer;
             outline: none;
         }
+        /* 요일 표시용 고정 텍스트 스타일 */
+        .weekday-display {
+            color: var(--flame-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            border: 1px solid var(--border-color);
+            padding: 3px 12px;
+            background: #0a0d14;
+        }
 
         .system-footer {
             margin-top: 35px;
@@ -468,7 +478,7 @@
                 <option value="02">FEBRUARY CYCLE</option>
                 <option value="03">MARCH CYCLE</option>
                 <option value="04">APRIL CYCLE</option>
-                <option value="05" selected>MAY CYCLE</option>
+                <option value="05">MAY CYCLE</option>
                 <option value="06">JUNE CYCLE</option>
                 <option value="07">JULY CYCLE</option>
                 <option value="08">AUGUST CYCLE</option>
@@ -486,11 +496,10 @@
         <button class="tab-btn" id="btn-tab-daily" onclick="switchTab('daily')">DAILY</button>
     </div>
 
-    <!-- MONTHLY TAB -->
     <div id="monthly" class="tab-content active">
         <div class="monthly-top-flow">
             <div class="rebirth-orbit" id="orbit-circle">
-                <div class="hearth-core" id="master-core" onclick="triggerIgnition()">Σποδός</div>
+                <div class="hearth-core" id="master-core" onclick="triggerIgnition()">Σποдός</div>
             </div>
         </div>
         
@@ -508,7 +517,6 @@
         </div>
     </div>
 
-    <!-- WEEKLY TAB -->
     <div id="weekly" class="tab-content">
         <div class="week-sub-menu">
             <button class="week-btn active" id="btn-week-1" onclick="switchWeek('1')">1ST WEEK</button>
@@ -557,7 +565,6 @@
         </div>
     </div>
 
-    <!-- DAILY TAB -->
     <div id="daily" class="tab-content">
         <div class="daily-control-panel">
             <div class="daily-indicator-text">
@@ -565,15 +572,7 @@
             </div>
             <select class="inner-selector" id="daily-day-select" onchange="switchDailySlot()">
             </select>
-            <select class="inner-selector" id="daily-week-select" onchange="switchDailySlot()">
-                <option value="SUNDAY">SUNDAY</option>
-                <option value="MONDAY">MONDAY</option>
-                <option value="TUESDAY">TUESDAY</option>
-                <option value="WEDNESDAY">WEDNESDAY</option>
-                <option value="THURSDAY">THURSDAY</option>
-                <option value="FRIDAY">FRIDAY</option>
-                <option value="SATURDAY">SATURDAY</option>
-            </select>
+            <div class="weekday-display" id="daily-weekday-display">SUNDAY</div>
         </div>
 
         <h3>REBIRTH CYCLE STATIONS</h3>
@@ -596,7 +595,7 @@
     let isIgnited = false;
     let currentTab = "monthly"; 
     let currentYear = "2026";
-    let currentMonth = "05";
+    let currentMonth = "06"; // 2026년 6월 현재 기준 디폴트 설정
     let currentWeek = "1"; 
     
     let selectedDailyDay = "01";
@@ -626,56 +625,62 @@
 
     let plannerData = createEmptyPlannerStructure();
 
+    // 💡 요일 자동 계산 함수 추가
+    function updateAutoWeekday() {
+        const yearInt = parseInt(currentYear);
+        const monthInt = parseInt(currentMonth);
+        const dayInt = parseInt(selectedDailyDay);
+        
+        const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        const dateObj = new Date(yearInt, monthInt - 1, dayInt);
+        
+        selectedDailyWeek = dayNames[dateObj.getDay()];
+        const displayEl = document.getElementById('daily-weekday-display');
+        if (displayEl) {
+            displayEl.innerText = selectedDailyWeek;
+        }
+    }
+
     function switchTab(id) {
         currentTab = id; 
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
         
-        const activeTab = document.getElementById(id);
-        if(activeTab) activeTab.classList.add('active');
+        const activeBtn = document.getElementById(`btn-tab-${id}`);
+        if (activeBtn) activeBtn.classList.add('active');
         
-        if (window.event && window.event.currentTarget) {
-            window.event.currentTarget.classList.add('active');
-        }
+        saveData();
     }
 
     function switchWeek(weekNum) {
         currentWeek = weekNum;
         document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
         const activeWeekBtn = document.getElementById(`btn-week-${weekNum}`);
-        if(activeWeekBtn) activeWeekBtn.classList.add('active');
+        if (activeWeekBtn) activeWeekBtn.classList.add('active');
+        
         loadWeeklyOnly();
+        saveData();
     }
 
     function switchDailySlot() {
-        const daySelect = document.getElementById('daily-day-select');
-        const weekSelect = document.getElementById('daily-week-select');
-        if(daySelect) selectedDailyDay = daySelect.value;
-        if(weekSelect) selectedDailyWeek = weekSelect.value;
+        selectedDailyDay = document.getElementById('daily-day-select').value;
+        updateAutoWeekday(); // 날짜 바뀔 때 자동으로 요일 계산
         loadDailyOnly();
+        saveData();
     }
 
     function saveData() {
-        const questEl = document.getElementById('text-quest');
-        const milestoneEl = document.getElementById('text-milestones');
-        if(questEl) plannerData.textAreas['quest'] = questEl.value;
-        if(milestoneEl) plannerData.textAreas['milestones'] = milestoneEl.value;
+        plannerData.textAreas['quest'] = document.getElementById('text-quest').value;
+        plannerData.textAreas['milestones'] = document.getElementById('text-milestones').value;
         
-        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        // 데이터는 깔끔하게 [날짜] 기준으로만 키값을 묶어 요일 꼬임을 방지합니다.
+        const matrixKey = `${selectedDailyDay}`;
         if(!plannerData.matrixDailyData[matrixKey]) {
             plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
         }
-        
-        const journalEl = document.getElementById('text-daily-journal');
-        if(journalEl) plannerData.matrixDailyData[matrixKey].journal = journalEl.value;
-        
-        const selectedChantBtn = document.querySelector('.state-btn.selected');
-        plannerData.matrixDailyData[matrixKey].chant = selectedChantBtn ? selectedChantBtn.dataset.val : "";
-
-        const weeklyQuestsEl = document.getElementById('text-weekly-quests');
-        if(weeklyQuestsEl && plannerData.weeklyData[currentWeek]) {
-            plannerData.weeklyData[currentWeek].quests = weeklyQuestsEl.value;
-        }
+        plannerData.matrixDailyData[matrixKey].journal = document.getElementById('text-daily-journal').value;
+        plannerData.weeklyData[currentWeek].quests = document.getElementById('text-weekly-quests').value;
 
         const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
         for(let i=1; i<=daysInMonth; i++) {
@@ -687,7 +692,8 @@
         localStorage.setItem('asteria_last_year', currentYear);
         localStorage.setItem('asteria_last_month', currentMonth);
         localStorage.setItem('asteria_last_d_day', selectedDailyDay);
-        localStorage.setItem('asteria_last_d_week', selectedDailyWeek);
+        localStorage.setItem('asteria_last_tab', currentTab);
+        localStorage.setItem('asteria_last_week', currentWeek);
     }
 
     function updateCoreText() {
@@ -717,25 +723,18 @@
     }
 
     function clearUI() {
-        const q = document.getElementById('text-quest');
-        const m = document.getElementById('text-milestones');
-        const w = document.getElementById('text-weekly-quests');
-        const j = document.getElementById('text-daily-journal');
-        if(q) q.value = "";
-        if(m) m.value = "";
-        if(w) w.value = "";
-        if(j) j.value = "";
-        
+        document.getElementById('text-quest').value = "";
+        document.getElementById('text-milestones').value = "";
+        document.getElementById('text-weekly-quests').value = "";
+        document.getElementById('text-daily-journal').value = "";
         document.querySelectorAll('.cell-input').forEach(i => i.value = "");
         document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
         document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
     }
 
     function loadWeeklyOnly() {
-        if(!plannerData.weeklyData[currentWeek]) return;
         const wData = plannerData.weeklyData[currentWeek];
-        const weeklyQuestsEl = document.getElementById('text-weekly-quests');
-        if(weeklyQuestsEl) weeklyQuestsEl.value = wData.quests || "";
+        document.getElementById('text-weekly-quests').value = wData.quests || "";
         
         document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
         for(let key in wData.routines) {
@@ -750,13 +749,12 @@
     }
 
     function loadDailyOnly() {
-        const journalEl = document.getElementById('text-daily-journal');
-        if(journalEl) journalEl.value = "";
+        document.getElementById('text-daily-journal').value = "";
         document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
 
-        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        const matrixKey = `${selectedDailyDay}`;
         const dData = plannerData.matrixDailyData[matrixKey] || createEmptyDailyObject();
-        if(journalEl) journalEl.value = dData.journal || "";
+        document.getElementById('text-daily-journal').value = dData.journal || "";
         
         if(dData.chant) {
             const targetBtn = document.getElementById(`btn-chant-${dData.chant}`);
@@ -766,7 +764,6 @@
 
     function rebuildOrbitCircle() {
         const orbit = document.getElementById('orbit-circle');
-        if(!orbit) return;
         document.querySelectorAll('.orbit-node').forEach(n => n.remove());
 
         const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
@@ -806,29 +803,26 @@
         }
 
         const daySelect = document.getElementById('daily-day-select');
-        if(daySelect) {
-            const prevValue = daySelect.value || selectedDailyDay;
-            daySelect.innerHTML = "";
-            for(let i=1; i<=daysInMonth; i++) {
-                const opt = document.createElement('option');
-                const txt = i < 10 ? '0' + i : i;
-                opt.value = txt;
-                opt.innerText = `DAY ${txt}`;
-                daySelect.appendChild(opt);
-            }
-            if(parseInt(prevValue) <= daysInMonth) {
-                daySelect.value = prevValue;
-                selectedDailyDay = prevValue;
-            } else {
-                daySelect.value = "01";
-                selectedDailyDay = "01";
-            }
+        const prevValue = daySelect.value || selectedDailyDay;
+        daySelect.innerHTML = "";
+        for(let i=1; i<=daysInMonth; i++) {
+            const opt = document.createElement('option');
+            const txt = i < 10 ? '0' + i : i;
+            opt.value = txt;
+            opt.innerText = `DAY ${txt}`;
+            daySelect.appendChild(opt);
+        }
+        if(parseInt(prevValue) <= daysInMonth) {
+            daySelect.value = prevValue;
+            selectedDailyDay = prevValue;
+        } else {
+            daySelect.value = "01";
+            selectedDailyDay = "01";
         }
     }
 
     function rebuildCalendarGrid() {
         const cal = document.getElementById('calendar-box');
-        if(!cal) return;
         cal.innerHTML = ""; 
 
         const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -881,10 +875,8 @@
         const saved = localStorage.getItem(`asteria_save_${currentYear}_${currentMonth}`);
         if(!saved) {
             plannerData = createEmptyPlannerStructure();
-            const dSelect = document.getElementById('daily-day-select');
-            const wSelect = document.getElementById('daily-week-select');
-            if(dSelect) dSelect.value = selectedDailyDay;
-            if(wSelect) wSelect.value = selectedDailyWeek;
+            document.getElementById('daily-day-select').value = selectedDailyDay;
+            updateAutoWeekday();
             loadDailyOnly();
             updateCoreText();
             return;
@@ -892,26 +884,13 @@
         
         plannerData = JSON.parse(saved);
 
+        // 데이터 이관 보장
         if(!plannerData.matrixDailyData) {
             plannerData.matrixDailyData = {};
-            if(plannerData.dailyData) {
-                for(let k in plannerData.dailyData) {
-                    plannerData.matrixDailyData[`${k < 10 ? '0'+k : k}_SUNDAY`] = plannerData.dailyData[k];
-                }
-            }
-        }
-        if (!plannerData.weeklyData) {
-            const oldRoutines = plannerData.weeklyRoutines || { hearth: [], chiron: [], embers: [], phoenix: [] };
-            const oldQuests = plannerData.textAreas['weeklyQuests'] || "";
-            plannerData = createEmptyPlannerStructure();
-            plannerData.weeklyData["1"].routines = oldRoutines;
-            plannerData.weeklyData["1"].quests = oldQuests;
         }
 
-        const qEl = document.getElementById('text-quest');
-        const mEl = document.getElementById('text-milestones');
-        if(qEl) qEl.value = plannerData.textAreas['quest'] || "";
-        if(mEl) mEl.value = plannerData.textAreas['milestones'] || "";
+        document.getElementById('text-quest').value = plannerData.textAreas['quest'] || "";
+        document.getElementById('text-milestones').value = plannerData.textAreas['milestones'] || "";
 
         document.querySelectorAll('.orbit-node').forEach(node => {
             const day = node.innerText;
@@ -928,10 +907,8 @@
             if(inp && plannerData.calendarInputs[i]) inp.value = plannerData.calendarInputs[i];
         }
 
-        const dSelect = document.getElementById('daily-day-select');
-        const wSelect = document.getElementById('daily-week-select');
-        if(dSelect) dSelect.value = selectedDailyDay;
-        if(wSelect) wSelect.value = selectedDailyWeek;
+        document.getElementById('daily-day-select').value = selectedDailyDay;
+        updateAutoWeekday();
         
         loadDailyOnly();
         loadWeeklyOnly();
@@ -940,12 +917,9 @@
 
     function changeTimelineCycle() {
         isIgnited = false;
-        const ySelect = document.getElementById('global-year-select');
-        const mSelect = document.getElementById('global-month-select');
-        if(ySelect) currentYear = ySelect.value;
-        if(mSelect) currentMonth = mSelect.value;
+        currentYear = document.getElementById('global-year-select').value;
+        currentMonth = document.getElementById('global-month-select').value;
         selectedDailyDay = "01";
-        selectedDailyWeek = "SUNDAY";
         loadData();
     }
 
@@ -953,7 +927,6 @@
         el.classList.toggle('active');
         const key = el.parentElement.dataset.routine;
         const wData = plannerData.weeklyData[currentWeek];
-        if(!wData) return;
         
         if(el.classList.contains('active')) {
             if(!wData.routines[key].includes(idx)) wData.routines[key].push(idx);
@@ -967,7 +940,7 @@
         document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
         el.classList.add('selected');
         
-        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        const matrixKey = `${selectedDailyDay}`;
         if(!plannerData.matrixDailyData[matrixKey]) {
             plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
         }
@@ -1006,9 +979,9 @@
         updateCoreText();
     }
 
-    // ✨ [수정] 요청하신 1안 영문 문구로 confirm 내용을 완전히 교체했습니다.
     function returnToAshes() {
-        if(confirm("Do you truly wish to burn all memories and return to ashes? The fragments of your memories will be completely incinerated.")) {
+        if(confirm("정말 모든 기록을 태워버리고 잿더미(RESET)로 회귀하시겠습니까? 현재 주기의 세이브가 완전히 연소됩니다.")) {
+            
             if (currentTab === "monthly") {
                 plannerData.orbitStates = {};
                 plannerData.calendarInputs = {};
@@ -1020,7 +993,7 @@
                     quests: ""
                 };
             } else if (currentTab === "daily") {
-                const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+                const matrixKey = `${selectedDailyDay}`;
                 plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
             }
 
@@ -1029,28 +1002,33 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
+    window.onload = function() {
         const lastY = localStorage.getItem('asteria_last_year');
         const lastM = localStorage.getItem('asteria_last_month');
-        const lastDD = localStorage.getItem('asteria_last_d_day'); 
-        const lastDW = localStorage.getItem('asteria_last_d_week');
+        const lastDD = localStorage.getItem('asteria_last_d_day');
+        const lastTab = localStorage.getItem('asteria_last_tab');
+        const lastWeek = localStorage.getItem('asteria_last_week');
         
-        const ySelect = document.getElementById('global-year-select');
-        const mSelect = document.getElementById('global-month-select');
-
         if(lastY && lastM) {
             currentYear = lastY;
             currentMonth = lastM;
-            if(ySelect) ySelect.value = lastY;
-            if(mSelect) mSelect.value = lastM;
+            document.getElementById('global-year-select').value = lastY;
+            document.getElementById('global-month-select').value = lastM;
         }
-        if(lastDD && lastDW) {
+        if(lastDD) {
             selectedDailyDay = lastDD;
-            selectedDailyWeek = lastDW;
         }
         
         loadData(); 
-    });
+
+        // 마지막에 보던 탭과 위클리 주차 복구
+        if(lastTab) {
+            switchTab(lastTab);
+        }
+        if(lastWeek) {
+            switchWeek(lastWeek);
+        }
+    };
 </script>
 </body>
 </html>
