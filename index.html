@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asteria's Chronicles - ΣΠΟΔΟΣ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=500;700&family=Playfair+Display:ital,wght=0,400;0,500;1,400&family=Pinyon+Script&display=swap');
+
+        :root {
+            --bg-color: #030508;
+            --panel-color: #0a0d14;
+            --border-color: #141b26;
+            --text-main: #e2e8f0;
+            --text-muted: #3a4454;
+            --flame-orange: #ff4500;
+            --flame-gold: #ffa500;
+            --ash-gray: #4a5568;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .planner-container {
+            width: 100%;
+            max-width: 1050px;
+            background: var(--panel-color);
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 70px rgba(0,0,0,0.98), 0 0 40px rgba(255, 69, 0, 0.02);
+            border-radius: 2px;
+            padding: 25px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .time-selector-wrapper {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .time-select {
+            background: #040609;
+            border: 1px solid var(--border-color);
+            color: var(--flame-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            padding: 6px 15px;
+            cursor: pointer;
+            outline: none;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .time-select:hover {
+            border-color: var(--flame-orange);
+            box-shadow: 0 0 8px rgba(255, 69, 0, 0.15);
+        }
+
+        .week-sub-menu {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .week-btn {
+            background: #040609;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 5px 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .week-btn:hover, .week-btn.active {
+            color: var(--flame-gold);
+            border-color: var(--flame-gold);
+            background: rgba(255, 165, 0, 0.02);
+        }
+
+        h1.main-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.8rem;
+            color: var(--flame-gold);
+            margin: 0;
+            font-weight: 500;
+            line-height: 1.2;
+            text-shadow: 0 0 15px rgba(255, 165, 0, 0.2);
+            letter-spacing: 4px;
+        }
+
+        .sub-title {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.35rem;
+            color: #b2bfc8;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .sub-title span.greek-script {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--flame-orange);
+            text-shadow: 0 0 8px rgba(255, 69, 0, 0.15);
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            margin-top: 12px;
+        }
+
+        .tab-menu {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 25px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            color: var(--flame-orange);
+            border-color: var(--flame-orange);
+            background: rgba(255, 69, 0, 0.01);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            background: #040609;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        textarea:focus { outline: none; border-color: var(--flame-gold); }
+
+        h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--flame-gold);
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+        }
+
+        .monthly-top-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0 35px 0;
+            border-bottom: 1px dashed var(--border-color);
+            margin-bottom: 25px;
+        }
+
+        .rebirth-orbit {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            border: 1px dashed rgba(255, 69, 0, 0.08);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hearth-core {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,69,0,0.12) 0%, rgba(0,0,0,0) 75%);
+            border: 1px solid rgba(255, 165, 0, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.4s ease-in-out;
+        }
+        
+        .hearth-core.ignited-core {
+            color: var(--flame-gold);
+            border-color: var(--flame-orange);
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--flame-gold);
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.2);
+        }
+
+        .orbit-node {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #080a0f;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            user-select: none;
+            color: var(--text-muted);
+        }
+        .orbit-node.state-1 { background: #1e2633; border-color: #4a5568; color: #a0aec0; box-shadow: 0 0 4px #1e2633; }
+        .orbit-node.state-2 { background: #4a2705; border-color: var(--flame-gold); color: #fff; box-shadow: 0 0 6px var(--flame-gold); }
+        .orbit-node.state-3 { background: #4a0d0d; border-color: var(--flame-orange); color: #fff; box-shadow: 0 0 10px var(--flame-orange); }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 25px;
+        }
+
+        .calendar-day-header {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--flame-gold);
+            text-align: center;
+            font-weight: 700;
+            padding: 8px 0;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calendar-cell {
+            background: #040609;
+            border: 1px solid var(--border-color);
+            min-height: 60px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            transition: all 0.25s ease-in-out;
+        }
+        
+        .calendar-cell.empty-cell {
+            background: transparent;
+            border: 1px dashed rgba(20, 27, 38, 0.4);
+            pointer-events: none;
+        }
+
+        .calendar-cell.cell-state-1 { border-color: var(--ash-gray); box-shadow: inset 0 0 8px rgba(74, 85, 104, 0.15); }
+        .calendar-cell.cell-state-2 { border-color: var(--flame-gold); box-shadow: inset 0 0 10px rgba(255, 165, 0, 0.1); }
+        .calendar-cell.cell-state-3 { border-color: var(--flame-orange); box-shadow: inset 0 0 12px rgba(255, 69, 0, 0.15); }
+
+        .day-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: color 0.25s;
+        }
+        .calendar-cell.cell-state-1 .day-num { color: #a0aec0; }
+        .calendar-cell.cell-state-2 .day-num { color: var(--flame-gold); }
+        .calendar-cell.cell-state-3 .day-num { color: var(--flame-orange); }
+
+        .cell-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-family: 'Playfair Display', serif;
+            font-size: 0.8rem;
+            margin-top: 3px;
+            padding: 0;
+        }
+        .cell-input:focus { outline: none; }
+
+        .routine-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .routine-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #040609;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .routine-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot-group { display: flex; gap: 5px; }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #080a0f;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        .dot.active {
+            background: var(--flame-orange);
+            border-color: var(--flame-gold);
+            box-shadow: 0 0 5px var(--flame-orange);
+        }
+
+        .state-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .state-btn {
+            padding: 12px 20px;
+            background: #040609;
+            border: 1px solid var(--border-color);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .state-btn.selected[data-val="burn"] { color: var(--flame-orange); border-color: var(--flame-orange); background: rgba(255, 69, 0, 0.02); text-shadow: 0 0 5px rgba(255,69,0,0.3); }
+        .state-btn.selected[data-val="spark"] { color: var(--flame-gold); border-color: var(--flame-gold); background: rgba(255, 165, 0, 0.02); text-shadow: 0 0 5px rgba(255,165,0,0.3); }
+        .state-btn.selected[data-val="ashes"] { color: #cbd5e0; border-color: #3f4a5c; background: rgba(74, 85, 104, 0.05); }
+
+        .journal-area { height: 280px !important; }
+
+        .daily-control-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            background: #040609;
+            border: 1px dashed var(--border-color);
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        .daily-indicator-text {
+            font-family: 'Cinzel', serif;
+            color: var(--text-main);
+            font-size: 1.05rem;
+            letter-spacing: 2px;
+        }
+        .daily-indicator-text span.greek-highlight {
+            color: var(--flame-gold);
+            text-shadow: 0 0 8px rgba(255, 165, 0, 0.2);
+            font-weight: 700;
+        }
+        .inner-selector {
+            background: #0a0d14;
+            border: 1px solid var(--border-color);
+            color: var(--flame-orange);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .system-footer {
+            margin-top: 35px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .reset-btn {
+            background: none;
+            border: 1px solid #2d1414;
+            color: #7a3a3a;
+            padding: 6px 15px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .reset-btn:hover {
+            color: #ff4500;
+            border-color: #ff4500;
+            background: rgba(255, 69, 0, 0.02);
+            box-shadow: 0 0 8px rgba(255, 69, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="planner-container">
+    <header>
+        <h1 class="main-title">ΣΠΟΔΟΣ</h1>
+        <div class="sub-title"><span class="greek-script">Ἐκ Σποδοῦ</span>: Asteria's Ash-Stained Ledger</div>
+        <div class="quote">“Ash is not the end of life; it is the cradle where the next immortal form awakens.”</div>
+        
+        <div class="time-selector-wrapper">
+            <select class="time-select" id="global-year-select" onchange="changeTimelineCycle()">
+                <option value="2026" selected>2026 PHOENIX</option>
+                <option value="2027">2027 PHOENIX</option>
+                <option value="2028">2028 PHOENIX</option>
+                <option value="2029">2029 PHOENIX</option>
+                <option value="2030">2030 PHOENIX</option>
+            </select>
+            
+            <select class="time-select" id="global-month-select" onchange="changeTimelineCycle()">
+                <option value="01">JANUARY CYCLE</option>
+                <option value="02">FEBRUARY CYCLE</option>
+                <option value="03">MARCH CYCLE</option>
+                <option value="04">APRIL CYCLE</option>
+                <option value="05" selected>MAY CYCLE</option>
+                <option value="06">JUNE CYCLE</option>
+                <option value="07">JULY CYCLE</option>
+                <option value="08">AUGUST CYCLE</option>
+                <option value="09">SEPTEMBER CYCLE</option>
+                <option value="10">OCTOBER CYCLE</option>
+                <option value="11">NOVEMBER CYCLE</option>
+                <option value="12">DECEMBER CYCLE</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="tab-menu">
+        <button class="tab-btn active" id="btn-tab-monthly" onclick="switchTab('monthly')">MONTHLY</button>
+        <button class="tab-btn" id="btn-tab-weekly" onclick="switchTab('weekly')">WEEKLY</button>
+        <button class="tab-btn" id="btn-tab-daily" onclick="switchTab('daily')">DAILY</button>
+    </div>
+
+    <!-- MONTHLY TAB -->
+    <div id="monthly" class="tab-content active">
+        <div class="monthly-top-flow">
+            <div class="rebirth-orbit" id="orbit-circle">
+                <div class="hearth-core" id="master-core" onclick="triggerIgnition()">Σποδός</div>
+            </div>
+        </div>
+        
+        <div class="calendar-grid" id="calendar-box"></div>
+
+        <div class="grid-2">
+            <div>
+                <h3>CAMP QUEST BOARD</h3>
+                <textarea id="text-quest" oninput="saveData()" placeholder="Record overarching assignments, laboratory terms, or expeditions..."></textarea>
+            </div>
+            <div>
+                <h3>FATED MILESTONES</h3>
+                <textarea id="text-milestones" oninput="saveData()" placeholder="Establish critical accomplishments destined to rise from the logs..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEEKLY TAB -->
+    <div id="weekly" class="tab-content">
+        <div class="week-sub-menu">
+            <button class="week-btn active" id="btn-week-1" onclick="switchWeek('1')">1ST WEEK</button>
+            <button class="week-btn" id="btn-week-2" onclick="switchWeek('2')">2ND WEEK</button>
+            <button class="week-btn" id="btn-week-3" onclick="switchWeek('3')">3RD WEEK</button>
+            <button class="week-btn" id="btn-week-4" onclick="switchWeek('4')">4TH WEEK</button>
+            <button class="week-btn" id="btn-week-5" onclick="switchWeek('5')">5TH WEEK</button>
+        </div>
+
+        <div class="grid-2">
+            <div class="routine-box">
+                <h3>TRAINING COMMAND</h3>
+                
+                <div class="routine-row">
+                    <span class="routine-title"><span>🏛️</span> Keeper of the Hearth</span>
+                    <div class="dot-group" data-routine="hearth">
+                        <div class="dot" onclick="toggleDot(this,0)"></div><div class="dot" onclick="toggleDot(this,1)"></div><div class="dot" onclick="toggleDot(this,2)"></div><div class="dot" onclick="toggleDot(this,3)"></div><div class="dot" onclick="toggleDot(this,4)"></div><div class="dot" onclick="toggleDot(this,5)"></div><div class="dot" onclick="toggleDot(this,6)"></div>
+                    </div>
+                </div>
+
+                <div class="routine-row">
+                    <span class="routine-title"><span>🏹</span> Chiron's Academic Drills</span>
+                    <div class="dot-group" data-routine="chiron">
+                        <div class="dot" onclick="toggleDot(this,0)"></div><div class="dot" onclick="toggleDot(this,1)"></div><div class="dot" onclick="toggleDot(this,2)"></div><div class="dot" onclick="toggleDot(this,3)"></div><div class="dot" onclick="toggleDot(this,4)"></div><div class="dot" onclick="toggleDot(this,5)"></div><div class="dot" onclick="toggleDot(this,6)"></div>
+                    </div>
+                </div>
+
+                <div class="routine-row">
+                    <span class="routine-title"><span>🪕</span> Tuning the Embers</span>
+                    <div class="dot-group" data-routine="embers">
+                        <div class="dot" onclick="toggleDot(this,0)"></div><div class="dot" onclick="toggleDot(this,1)"></div><div class="dot" onclick="toggleDot(this,2)"></div><div class="dot" onclick="toggleDot(this,3)"></div><div class="dot" onclick="toggleDot(this,4)"></div><div class="dot" onclick="toggleDot(this,5)"></div><div class="dot" onclick="toggleDot(this,6)"></div>
+                    </div>
+                </div>
+
+                <div class="routine-row">
+                    <span class="routine-title"><span>🌫️</span> Whispers of the Phoenix</span>
+                    <div class="dot-group" data-routine="phoenix">
+                        <div class="dot" onclick="toggleDot(this,0)"></div><div class="dot" onclick="toggleDot(this,1)"></div><div class="dot" onclick="toggleDot(this,2)"></div><div class="dot" onclick="toggleDot(this,3)"></div><div class="dot" onclick="toggleDot(this,4)"></div><div class="dot" onclick="toggleDot(this,5)"></div><div class="dot" onclick="toggleDot(this,6)"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>CURRENT QUESTS</h3>
+                <textarea id="text-weekly-quests" oninput="saveData()" style="height: 220px;" placeholder="Identify specific objectives that must be burned down this week..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAILY TAB -->
+    <div id="daily" class="tab-content">
+        <div class="daily-control-panel">
+            <div class="daily-indicator-text">
+                <span class="greek-highlight">μνήμη</span> INDICATOR: THE EMBERS OF
+            </div>
+            <select class="inner-selector" id="daily-day-select" onchange="switchDailySlot()">
+            </select>
+            <select class="inner-selector" id="daily-week-select" onchange="switchDailySlot()">
+                <option value="SUNDAY">SUNDAY</option>
+                <option value="MONDAY">MONDAY</option>
+                <option value="TUESDAY">TUESDAY</option>
+                <option value="WEDNESDAY">WEDNESDAY</option>
+                <option value="THURSDAY">THURSDAY</option>
+                <option value="FRIDAY">FRIDAY</option>
+                <option value="SATURDAY">SATURDAY</option>
+            </select>
+        </div>
+
+        <h3>REBIRTH CYCLE STATIONS</h3>
+        <div class="state-selector">
+            <div class="state-btn" id="btn-chant-burn" data-val="burn" onclick="selectState(this)">🔥 “CONSUMED IN PURE FLAME”</div>
+            <div class="state-btn" id="btn-chant-spark" data-val="spark" onclick="selectState(this)">✨ “SUSTAINED THE HIDDEN EMBERS”</div>
+            <div class="state-btn" id="btn-chant-ashes" data-val="ashes" onclick="selectState(this)">🌑 “RETURNED TO SACRED ASHES”</div>
+        </div>
+
+        <h3>ASHES RECALLED</h3>
+        <textarea id="text-daily-journal" oninput="saveData()" class="journal-area" placeholder="Write down what you must never forget before the world fades into oblivion..."></textarea>
+    </div>
+
+    <div class="system-footer">
+        <button class="reset-btn" id="master-reset-btn" onclick="returnToAshes()">“RETURN TO ASHES” (RESET)</button>
+    </div>
+</div>
+
+<script>
+    let isIgnited = false;
+    let currentTab = "monthly"; 
+    let currentYear = "2026";
+    let currentMonth = "05";
+    let currentWeek = "1"; 
+    
+    let selectedDailyDay = "01";
+    let selectedDailyWeek = "SUNDAY";
+    
+    const tempMemoryStates = {};
+
+    function createEmptyPlannerStructure() {
+        return {
+            orbitStates: {},
+            calendarInputs: {},
+            textAreas: { quest: "", milestones: "" },
+            weeklyData: {
+                "1": { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" },
+                "2": { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" },
+                "3": { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" },
+                "4": { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" },
+                "5": { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" }
+            },
+            matrixDailyData: {} 
+        };
+    }
+
+    function createEmptyDailyObject() {
+        return { chant: "", journal: "" };
+    }
+
+    let plannerData = createEmptyPlannerStructure();
+
+    function switchTab(id) {
+        currentTab = id; 
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        const activeTab = document.getElementById(id);
+        if(activeTab) activeTab.classList.add('active');
+        
+        if (window.event && window.event.currentTarget) {
+            window.event.currentTarget.classList.add('active');
+        }
+    }
+
+    function switchWeek(weekNum) {
+        currentWeek = weekNum;
+        document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+        const activeWeekBtn = document.getElementById(`btn-week-${weekNum}`);
+        if(activeWeekBtn) activeWeekBtn.classList.add('active');
+        loadWeeklyOnly();
+    }
+
+    function switchDailySlot() {
+        const daySelect = document.getElementById('daily-day-select');
+        const weekSelect = document.getElementById('daily-week-select');
+        if(daySelect) selectedDailyDay = daySelect.value;
+        if(weekSelect) selectedDailyWeek = weekSelect.value;
+        loadDailyOnly();
+    }
+
+    function saveData() {
+        const questEl = document.getElementById('text-quest');
+        const milestoneEl = document.getElementById('text-milestones');
+        if(questEl) plannerData.textAreas['quest'] = questEl.value;
+        if(milestoneEl) plannerData.textAreas['milestones'] = milestoneEl.value;
+        
+        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        if(!plannerData.matrixDailyData[matrixKey]) {
+            plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
+        }
+        
+        const journalEl = document.getElementById('text-daily-journal');
+        if(journalEl) plannerData.matrixDailyData[matrixKey].journal = journalEl.value;
+        
+        const selectedChantBtn = document.querySelector('.state-btn.selected');
+        plannerData.matrixDailyData[matrixKey].chant = selectedChantBtn ? selectedChantBtn.dataset.val : "";
+
+        const weeklyQuestsEl = document.getElementById('text-weekly-quests');
+        if(weeklyQuestsEl && plannerData.weeklyData[currentWeek]) {
+            plannerData.weeklyData[currentWeek].quests = weeklyQuestsEl.value;
+        }
+
+        const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
+        for(let i=1; i<=daysInMonth; i++) {
+            const inp = document.getElementById(`cal-input-${i}`);
+            if(inp) plannerData.calendarInputs[i] = inp.value;
+        }
+
+        localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
+        localStorage.setItem('asteria_last_year', currentYear);
+        localStorage.setItem('asteria_last_month', currentMonth);
+        localStorage.setItem('asteria_last_d_day', selectedDailyDay);
+        localStorage.setItem('asteria_last_d_week', selectedDailyWeek);
+    }
+
+    function updateCoreText() {
+        const core = document.getElementById('master-core');
+        if (!core) return;
+        if (isIgnited) {
+            core.innerText = "REBIRTH";
+            core.classList.add('ignited-core');
+            return;
+        }
+
+        let hasFlame = false;
+        for (let key in plannerData.orbitStates) {
+            if (parseInt(plannerData.orbitStates[key]) > 0) {
+                hasFlame = true;
+                break;
+            }
+        }
+
+        if (hasFlame) {
+            core.innerText = "REBIRTH";
+            core.classList.add('ignited-core');
+        } else {
+            core.innerText = "Σποδός";
+            core.classList.remove('ignited-core');
+        }
+    }
+
+    function clearUI() {
+        const q = document.getElementById('text-quest');
+        const m = document.getElementById('text-milestones');
+        const w = document.getElementById('text-weekly-quests');
+        const j = document.getElementById('text-daily-journal');
+        if(q) q.value = "";
+        if(m) m.value = "";
+        if(w) w.value = "";
+        if(j) j.value = "";
+        
+        document.querySelectorAll('.cell-input').forEach(i => i.value = "");
+        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
+    }
+
+    function loadWeeklyOnly() {
+        if(!plannerData.weeklyData[currentWeek]) return;
+        const wData = plannerData.weeklyData[currentWeek];
+        const weeklyQuestsEl = document.getElementById('text-weekly-quests');
+        if(weeklyQuestsEl) weeklyQuestsEl.value = wData.quests || "";
+        
+        document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+        for(let key in wData.routines) {
+            const row = document.querySelector(`[data-routine="${key}"]`);
+            if(row) {
+                const dots = row.querySelectorAll('.dot');
+                wData.routines[key].forEach(idx => {
+                    if(dots[idx]) dots[idx].classList.add('active');
+                });
+            }
+        }
+    }
+
+    function loadDailyOnly() {
+        const journalEl = document.getElementById('text-daily-journal');
+        if(journalEl) journalEl.value = "";
+        document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
+
+        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        const dData = plannerData.matrixDailyData[matrixKey] || createEmptyDailyObject();
+        if(journalEl) journalEl.value = dData.journal || "";
+        
+        if(dData.chant) {
+            const targetBtn = document.getElementById(`btn-chant-${dData.chant}`);
+            if(targetBtn) targetBtn.classList.add('selected');
+        }
+    }
+
+    function rebuildOrbitCircle() {
+        const orbit = document.getElementById('orbit-circle');
+        if(!orbit) return;
+        document.querySelectorAll('.orbit-node').forEach(n => n.remove());
+
+        const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
+        const radius = 110; 
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const node = document.createElement('div');
+            node.className = 'orbit-node';
+            node.innerText = i;
+            node.id = `orbit-node-${i}`;
+            node.dataset.state = "0";
+
+            const angle = (i - 1) * (360 / daysInMonth) - 90;
+            const radians = angle * (Math.PI / 180);
+            
+            const x = Math.round(radius * Math.cos(radians)) + 130 - 11;
+            const y = Math.round(radius * Math.sin(radians)) + 130 - 11;
+
+            node.style.left = `${x}px`;
+            node.style.top = `${y}px`;
+
+            node.addEventListener('click', function() {
+                if (isIgnited) return; 
+                let s = parseInt(this.dataset.state);
+                this.classList.remove(`state-${s}`);
+                s = (s + 1) % 4;
+                this.dataset.state = s;
+                if(s > 0) this.classList.add(`state-${s}`);
+                
+                plannerData.orbitStates[this.innerText] = s;
+                syncCalendarCell(this.innerText, s);
+                saveData();
+                updateCoreText();
+            });
+
+            orbit.appendChild(node);
+        }
+
+        const daySelect = document.getElementById('daily-day-select');
+        if(daySelect) {
+            const prevValue = daySelect.value || selectedDailyDay;
+            daySelect.innerHTML = "";
+            for(let i=1; i<=daysInMonth; i++) {
+                const opt = document.createElement('option');
+                const txt = i < 10 ? '0' + i : i;
+                opt.value = txt;
+                opt.innerText = `DAY ${txt}`;
+                daySelect.appendChild(opt);
+            }
+            if(parseInt(prevValue) <= daysInMonth) {
+                daySelect.value = prevValue;
+                selectedDailyDay = prevValue;
+            } else {
+                daySelect.value = "01";
+                selectedDailyDay = "01";
+            }
+        }
+    }
+
+    function rebuildCalendarGrid() {
+        const cal = document.getElementById('calendar-box');
+        if(!cal) return;
+        cal.innerHTML = ""; 
+
+        const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+        dayNames.forEach(name => {
+            const headerCell = document.createElement('div');
+            headerCell.className = 'calendar-day-header';
+            headerCell.innerText = name;
+            cal.appendChild(headerCell);
+        });
+
+        const yearInt = parseInt(currentYear);
+        const monthInt = parseInt(currentMonth);
+        
+        const firstDayIndex = new Date(yearInt, monthInt - 1, 1).getDay(); 
+        const daysInMonth = new Date(yearInt, monthInt, 0).getDate(); 
+
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'calendar-cell empty-cell';
+            cal.appendChild(emptyCell);
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-cell';
+            cell.id = `cal-cell-${i}`;
+            
+            const num = document.createElement('span');
+            num.className = 'day-num';
+            num.innerText = i < 10 ? '0' + i : i;
+            
+            const input = document.createElement('input');
+            input.className = 'cell-input';
+            input.id = `cal-input-${i}`;
+            input.type = 'text';
+            input.placeholder = '...';
+            input.addEventListener('input', saveData);
+            
+            cell.appendChild(num);
+            cell.appendChild(input);
+            cal.appendChild(cell);
+        }
+    }
+
+    function loadData() {
+        clearUI();
+        rebuildOrbitCircle(); 
+        rebuildCalendarGrid(); 
+
+        const saved = localStorage.getItem(`asteria_save_${currentYear}_${currentMonth}`);
+        if(!saved) {
+            plannerData = createEmptyPlannerStructure();
+            const dSelect = document.getElementById('daily-day-select');
+            const wSelect = document.getElementById('daily-week-select');
+            if(dSelect) dSelect.value = selectedDailyDay;
+            if(wSelect) wSelect.value = selectedDailyWeek;
+            loadDailyOnly();
+            updateCoreText();
+            return;
+        }
+        
+        plannerData = JSON.parse(saved);
+
+        if(!plannerData.matrixDailyData) {
+            plannerData.matrixDailyData = {};
+            if(plannerData.dailyData) {
+                for(let k in plannerData.dailyData) {
+                    plannerData.matrixDailyData[`${k < 10 ? '0'+k : k}_SUNDAY`] = plannerData.dailyData[k];
+                }
+            }
+        }
+        if (!plannerData.weeklyData) {
+            const oldRoutines = plannerData.weeklyRoutines || { hearth: [], chiron: [], embers: [], phoenix: [] };
+            const oldQuests = plannerData.textAreas['weeklyQuests'] || "";
+            plannerData = createEmptyPlannerStructure();
+            plannerData.weeklyData["1"].routines = oldRoutines;
+            plannerData.weeklyData["1"].quests = oldQuests;
+        }
+
+        const qEl = document.getElementById('text-quest');
+        const mEl = document.getElementById('text-milestones');
+        if(qEl) qEl.value = plannerData.textAreas['quest'] || "";
+        if(mEl) mEl.value = plannerData.textAreas['milestones'] || "";
+
+        document.querySelectorAll('.orbit-node').forEach(node => {
+            const day = node.innerText;
+            const state = plannerData.orbitStates[day] || "0";
+            node.dataset.state = state;
+            node.classList.remove('state-1', 'state-2', 'state-3');
+            if(parseInt(state) > 0) node.classList.add(`state-${state}`);
+            syncCalendarCell(day, state);
+        });
+
+        const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
+        for(let i=1; i<=daysInMonth; i++) {
+            const inp = document.getElementById(`cal-input-${i}`);
+            if(inp && plannerData.calendarInputs[i]) inp.value = plannerData.calendarInputs[i];
+        }
+
+        const dSelect = document.getElementById('daily-day-select');
+        const wSelect = document.getElementById('daily-week-select');
+        if(dSelect) dSelect.value = selectedDailyDay;
+        if(wSelect) wSelect.value = selectedDailyWeek;
+        
+        loadDailyOnly();
+        loadWeeklyOnly();
+        updateCoreText();
+    }
+
+    function changeTimelineCycle() {
+        isIgnited = false;
+        const ySelect = document.getElementById('global-year-select');
+        const mSelect = document.getElementById('global-month-select');
+        if(ySelect) currentYear = ySelect.value;
+        if(mSelect) currentMonth = mSelect.value;
+        selectedDailyDay = "01";
+        selectedDailyWeek = "SUNDAY";
+        loadData();
+    }
+
+    function toggleDot(el, idx) {
+        el.classList.toggle('active');
+        const key = el.parentElement.dataset.routine;
+        const wData = plannerData.weeklyData[currentWeek];
+        if(!wData) return;
+        
+        if(el.classList.contains('active')) {
+            if(!wData.routines[key].includes(idx)) wData.routines[key].push(idx);
+        } else {
+            wData.routines[key] = wData.routines[key].filter(v => v !== idx);
+        }
+        saveData();
+    }
+
+    function selectState(el) {
+        document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+        if(!plannerData.matrixDailyData[matrixKey]) {
+            plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
+        }
+        plannerData.matrixDailyData[matrixKey].chant = el.dataset.val;
+        saveData();
+    }
+
+    function syncCalendarCell(dayNum, state) {
+        const cell = document.getElementById(`cal-cell-${dayNum}`);
+        if (!cell) return;
+        cell.classList.remove('cell-state-1', 'cell-state-2', 'cell-state-3');
+        if (parseInt(state) > 0) cell.classList.add(`cell-state-${state}`);
+    }
+
+    function triggerIgnition() {
+        const nodes = document.querySelectorAll('.orbit-node');
+        
+        if (!isIgnited) {
+            nodes.forEach(node => {
+                tempMemoryStates[node.innerText] = node.dataset.state;
+                node.classList.remove('state-1', 'state-2', 'state-3');
+                node.classList.add('state-3');
+                syncCalendarCell(node.innerText, 3);
+            });
+            isIgnited = true;
+        } else {
+            nodes.forEach(node => {
+                node.classList.remove('state-1', 'state-2', 'state-3');
+                const originalState = tempMemoryStates[node.innerText] || "0";
+                node.dataset.state = originalState;
+                if (parseInt(originalState) > 0) node.classList.add(`state-${originalState}`);
+                syncCalendarCell(node.innerText, originalState);
+            });
+            isIgnited = false;
+        }
+        updateCoreText();
+    }
+
+    // ✨ [수정] 요청하신 1안 영문 문구로 confirm 내용을 완전히 교체했습니다.
+    function returnToAshes() {
+        if(confirm("Do you truly wish to burn all memories and return to ashes? The fragments of your memories will be completely incinerated.")) {
+            if (currentTab === "monthly") {
+                plannerData.orbitStates = {};
+                plannerData.calendarInputs = {};
+                plannerData.textAreas['quest'] = "";
+                plannerData.textAreas['milestones'] = "";
+            } else if (currentTab === "weekly") {
+                plannerData.weeklyData[currentWeek] = {
+                    routines: { hearth: [], chiron: [], embers: [], phoenix: [] },
+                    quests: ""
+                };
+            } else if (currentTab === "daily") {
+                const matrixKey = `${selectedDailyDay}_${selectedDailyWeek}`;
+                plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
+            }
+
+            localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
+            loadData();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const lastY = localStorage.getItem('asteria_last_year');
+        const lastM = localStorage.getItem('asteria_last_month');
+        const lastDD = localStorage.getItem('asteria_last_d_day'); 
+        const lastDW = localStorage.getItem('asteria_last_d_week');
+        
+        const ySelect = document.getElementById('global-year-select');
+        const mSelect = document.getElementById('global-month-select');
+
+        if(lastY && lastM) {
+            currentYear = lastY;
+            currentMonth = lastM;
+            if(ySelect) ySelect.value = lastY;
+            if(mSelect) mSelect.value = lastM;
+        }
+        if(lastDD && lastDW) {
+            selectedDailyDay = lastDD;
+            selectedDailyWeek = lastDW;
+        }
+        
+        loadData(); 
+    });
+</script>
+</body>
+</html>
