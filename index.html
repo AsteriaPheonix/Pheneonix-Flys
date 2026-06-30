@@ -594,15 +594,15 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // ⚠️ 아래 빈칸들을 Firebase 웹 설정 창에 나온 값으로 꼭 채워주세요!
+    // 🌟 아스트리아님의 진짜 Firebase 정보 대입 완료!
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        databaseURL: "https://asteria-pad-default-rtdb.firebaseio.com/", 
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyAGJ7_mn5R8wdQInyzk5NQVRlvGFFtCKiM",
+        authDomain: "asteria-pad.firebaseapp.com",
+        databaseURL: "https://asteria-pad-default-rtdb.firebaseio.com",
+        projectId: "asteria-pad",
+        storageBucket: "asteria-pad.firebasestorage.app",
+        messagingSenderId: "281179870896",
+        appId: "1:281179870896:web:ceb21e6de9a3bf9dd94d75"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -733,7 +733,7 @@
             core.innerText = "REBIRTH";
             core.classList.add('ignited-core');
         } else {
-            core.innerText = "Σποдός";
+            core.innerText = "Σποδός";
             core.classList.remove('ignited-core');
         }
     }
@@ -900,7 +900,7 @@
                 savedData = snapshot.val();
             }
         } catch (error) {
-            console.error("Firebase 로드 실패, 로컬을 대신 불러옵니다:", error);
+            console.error("Firebase 로드 실패:", error);
         }
 
         if (!savedData) {
@@ -1036,7 +1036,7 @@
         }
     }
 
-    // 🌟 전역 공간 에러 방지를 위해 하나로 묶은 초기 실행 함수
+    // 🌟 전역 안전 실행용 초기 함수 묶음
     async function init() {
         const lastY = localStorage.getItem('asteria_last_year');
         const lastM = localStorage.getItem('asteria_last_month');
