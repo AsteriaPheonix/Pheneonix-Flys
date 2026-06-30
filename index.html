@@ -418,7 +418,6 @@
             cursor: pointer;
             outline: none;
         }
-        /* 요일 표시용 고정 텍스트 스타일 */
         .weekday-display {
             color: var(--flame-gold);
             font-family: 'Cinzel', serif;
@@ -591,11 +590,28 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // ⚠️ 아래 빈칸들을 Firebase 웹 설정 창에 나온 값으로 꼭 채워주세요!
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "https://asteria-pad-default-rtdb.firebaseio.com/", // 방금 확인하신 데이터베이스 주소입니다.
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
     let isIgnited = false;
     let currentTab = "monthly"; 
     let currentYear = "2026";
-    let currentMonth = "06"; // 2026년 6월 현재 기준 디폴트 설정
+    let currentMonth = "06"; 
     let currentWeek = "1"; 
     
     let selectedDailyDay = "01";
@@ -625,7 +641,6 @@
 
     let plannerData = createEmptyPlannerStructure();
 
-    // 💡 요일 자동 계산 함수 추가
     function updateAutoWeekday() {
         const yearInt = parseInt(currentYear);
         const monthInt = parseInt(currentMonth);
@@ -641,7 +656,8 @@
         }
     }
 
-    function switchTab(id) {
+    // 글로벌 스코프 문제 해결을 위해 윈도우 객체에 함수 매핑
+    window.switchTab = function(id) {
         currentTab = id; 
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -653,7 +669,7 @@
         saveData();
     }
 
-    function switchWeek(weekNum) {
+    window.switchWeek = function(weekNum) {
         currentWeek = weekNum;
         document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
         const activeWeekBtn = document.getElementById(`btn-week-${weekNum}`);
@@ -663,18 +679,17 @@
         saveData();
     }
 
-    function switchDailySlot() {
+    window.switchDailySlot = function() {
         selectedDailyDay = document.getElementById('daily-day-select').value;
-        updateAutoWeekday(); // 날짜 바뀔 때 자동으로 요일 계산
+        updateAutoWeekday(); 
         loadDailyOnly();
         saveData();
     }
 
-    function saveData() {
+    window.saveData = function() {
         plannerData.textAreas['quest'] = document.getElementById('text-quest').value;
         plannerData.textAreas['milestones'] = document.getElementById('text-milestones').value;
         
-        // 데이터는 깔끔하게 [날짜] 기준으로만 키값을 묶어 요일 꼬임을 방지합니다.
         const matrixKey = `${selectedDailyDay}`;
         if(!plannerData.matrixDailyData[matrixKey]) {
             plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
@@ -688,12 +703,16 @@
             if(inp) plannerData.calendarInputs[i] = inp.value;
         }
 
+        // 로컬 백업 유지
         localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
         localStorage.setItem('asteria_last_year', currentYear);
         localStorage.setItem('asteria_last_month', currentMonth);
         localStorage.setItem('asteria_last_d_day', selectedDailyDay);
         localStorage.setItem('asteria_last_tab', currentTab);
         localStorage.setItem('asteria_last_week', currentWeek);
+
+        // 🚀 Firebase 클라우드 서버에 실시간 저장
+        set(ref(db, `asteria_save/${currentYear}/${currentMonth}`), plannerData);
     }
 
     function updateCoreText() {
@@ -727,7 +746,10 @@
         document.getElementById('text-milestones').value = "";
         document.getElementById('text-weekly-quests').value = "";
         document.getElementById('text-daily-journal').value = "";
-        document.querySelectorAll('.cell-input').forEach(i => i.value = "");
+        const calBox = document.getElementById('calendar-box');
+        if(calBox) {
+            calBox.querySelectorAll('.cell-input').forEach(i => i.value = "");
+        }
         document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
         document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
     }
@@ -764,7 +786,7 @@
 
     function rebuildOrbitCircle() {
         const orbit = document.getElementById('orbit-circle');
-        document.querySelectorAll('.orbit-node').forEach(n => n.remove());
+        orbit.querySelectorAll('.orbit-node').forEach(n => n.remove());
 
         const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
         const radius = 110; 
@@ -867,13 +889,32 @@
         }
     }
 
-    function loadData() {
+    // 🚀 서버에서 실시간으로 데이터를 로드하도록 비동기(async) 방식으로 변경
+    window.loadData = async function() {
         clearUI();
         rebuildOrbitCircle(); 
         rebuildCalendarGrid(); 
 
-        const saved = localStorage.getItem(`asteria_save_${currentYear}_${currentMonth}`);
-        if(!saved) {
+        const dbRef = ref(db);
+        let savedData = null;
+
+        // 1. Firebase 서버에서 최신 정보 당겨오기
+        try {
+            const snapshot = await get(child(dbRef, `asteria_save/${currentYear}/${currentMonth}`));
+            if (snapshot.exists()) {
+                savedData = snapshot.val();
+            }
+        } catch (error) {
+            console.error("Firebase 로드 실패, 로컬을 대신 불러옵니다:", error);
+        }
+
+        // 2. 서버에 없으면 임시로 로컬 데이터 확인
+        if (!savedData) {
+            const saved = localStorage.getItem(`asteria_save_${currentYear}_${currentMonth}`);
+            if(saved) savedData = JSON.parse(saved);
+        }
+
+        if(!savedData) {
             plannerData = createEmptyPlannerStructure();
             document.getElementById('daily-day-select').value = selectedDailyDay;
             updateAutoWeekday();
@@ -882,9 +923,8 @@
             return;
         }
         
-        plannerData = JSON.parse(saved);
+        plannerData = savedData;
 
-        // 데이터 이관 보장
         if(!plannerData.matrixDailyData) {
             plannerData.matrixDailyData = {};
         }
@@ -915,7 +955,7 @@
         updateCoreText();
     }
 
-    function changeTimelineCycle() {
+    window.changeTimelineCycle = function() {
         isIgnited = false;
         currentYear = document.getElementById('global-year-select').value;
         currentMonth = document.getElementById('global-month-select').value;
@@ -923,7 +963,7 @@
         loadData();
     }
 
-    function toggleDot(el, idx) {
+    window.toggleDot = function(el, idx) {
         el.classList.toggle('active');
         const key = el.parentElement.dataset.routine;
         const wData = plannerData.weeklyData[currentWeek];
@@ -936,7 +976,7 @@
         saveData();
     }
 
-    function selectState(el) {
+    window.selectState = function(el) {
         document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
         el.classList.add('selected');
         
@@ -955,7 +995,7 @@
         if (parseInt(state) > 0) cell.classList.add(`cell-state-${state}`);
     }
 
-    function triggerIgnition() {
+    window.triggerIgnition = function() {
         const nodes = document.querySelectorAll('.orbit-node');
         
         if (!isIgnited) {
@@ -979,9 +1019,8 @@
         updateCoreText();
     }
 
-    function returnToAshes() {
+    window.returnToAshes = function() {
         if(confirm("정말 모든 기록을 태워버리고 잿더미(RESET)로 회귀하시겠습니까? 현재 주기의 세이브가 완전히 연소됩니다.")) {
-            
             if (currentTab === "monthly") {
                 plannerData.orbitStates = {};
                 plannerData.calendarInputs = {};
@@ -998,37 +1037,38 @@
             }
 
             localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
+            set(ref(db, `asteria_save/${currentYear}/${currentMonth}`), plannerData);
             loadData();
         }
     }
 
-    window.onload = function() {
-        const lastY = localStorage.getItem('asteria_last_year');
-        const lastM = localStorage.getItem('asteria_last_month');
-        const lastDD = localStorage.getItem('asteria_last_d_day');
-        const lastTab = localStorage.getItem('asteria_last_tab');
-        const lastWeek = localStorage.getItem('asteria_last_week');
-        
-        if(lastY && lastM) {
-            currentYear = lastY;
-            currentMonth = lastM;
-            document.getElementById('global-year-select').value = lastY;
-            document.getElementById('global-month-select').value = lastM;
-        }
-        if(lastDD) {
-            selectedDailyDay = lastDD;
-        }
-        
-        loadData(); 
+    // 초기 실행
+    const lastY = localStorage.getItem('asteria_last_year');
+    const lastM = localStorage.getItem('asteria_last_month');
+    const lastDD = localStorage.getItem('asteria_last_d_day');
+    const lastTab = localStorage.getItem('asteria_last_tab');
+    const lastWeek = localStorage.getItem('asteria_last_week');
+    
+    if(lastY && lastM) {
+        currentYear = lastY;
+        currentMonth = lastM;
+        const ySel = document.getElementById('global-year-select');
+        const mSel = document.getElementById('global-month-select');
+        if(ySel) ySel.value = lastY;
+        if(mSel) mSel.value = lastM;
+    }
+    if(lastDD) {
+        selectedDailyDay = lastDD;
+    }
+    
+    await loadData(); 
 
-        // 마지막에 보던 탭과 위클리 주차 복구
-        if(lastTab) {
-            switchTab(lastTab);
-        }
-        if(lastWeek) {
-            switchWeek(lastWeek);
-        }
-    };
+    if(lastTab) {
+        switchTab(lastTab);
+    }
+    if(lastWeek) {
+        switchWeek(lastWeek);
+    }
 </script>
 </body>
 </html>
