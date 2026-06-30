@@ -598,7 +598,7 @@
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
-        databaseURL: "https://asteria-pad-default-rtdb.firebaseio.com/", // 방금 확인하신 데이터베이스 주소입니다.
+        databaseURL: "https://asteria-pad-default-rtdb.firebaseio.com/", 
         projectId: "YOUR_PROJECT_ID",
         storageBucket: "YOUR_STORAGE_BUCKET",
         messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
@@ -656,7 +656,6 @@
         }
     }
 
-    // 글로벌 스코프 문제 해결을 위해 윈도우 객체에 함수 매핑
     window.switchTab = function(id) {
         currentTab = id; 
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -703,7 +702,6 @@
             if(inp) plannerData.calendarInputs[i] = inp.value;
         }
 
-        // 로컬 백업 유지
         localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
         localStorage.setItem('asteria_last_year', currentYear);
         localStorage.setItem('asteria_last_month', currentMonth);
@@ -711,7 +709,6 @@
         localStorage.setItem('asteria_last_tab', currentTab);
         localStorage.setItem('asteria_last_week', currentWeek);
 
-        // 🚀 Firebase 클라우드 서버에 실시간 저장
         set(ref(db, `asteria_save/${currentYear}/${currentMonth}`), plannerData);
     }
 
@@ -736,7 +733,7 @@
             core.innerText = "REBIRTH";
             core.classList.add('ignited-core');
         } else {
-            core.innerText = "Σποδός";
+            core.innerText = "Σποдός";
             core.classList.remove('ignited-core');
         }
     }
@@ -889,7 +886,6 @@
         }
     }
 
-    // 🚀 서버에서 실시간으로 데이터를 로드하도록 비동기(async) 방식으로 변경
     window.loadData = async function() {
         clearUI();
         rebuildOrbitCircle(); 
@@ -898,7 +894,6 @@
         const dbRef = ref(db);
         let savedData = null;
 
-        // 1. Firebase 서버에서 최신 정보 당겨오기
         try {
             const snapshot = await get(child(dbRef, `asteria_save/${currentYear}/${currentMonth}`));
             if (snapshot.exists()) {
@@ -908,7 +903,6 @@
             console.error("Firebase 로드 실패, 로컬을 대신 불러옵니다:", error);
         }
 
-        // 2. 서버에 없으면 임시로 로컬 데이터 확인
         if (!savedData) {
             const saved = localStorage.getItem(`asteria_save_${currentYear}_${currentMonth}`);
             if(saved) savedData = JSON.parse(saved);
@@ -1042,33 +1036,37 @@
         }
     }
 
-    // 초기 실행
-    const lastY = localStorage.getItem('asteria_last_year');
-    const lastM = localStorage.getItem('asteria_last_month');
-    const lastDD = localStorage.getItem('asteria_last_d_day');
-    const lastTab = localStorage.getItem('asteria_last_tab');
-    const lastWeek = localStorage.getItem('asteria_last_week');
-    
-    if(lastY && lastM) {
-        currentYear = lastY;
-        currentMonth = lastM;
-        const ySel = document.getElementById('global-year-select');
-        const mSel = document.getElementById('global-month-select');
-        if(ySel) ySel.value = lastY;
-        if(mSel) mSel.value = lastM;
-    }
-    if(lastDD) {
-        selectedDailyDay = lastDD;
-    }
-    
-    await loadData(); 
+    // 🌟 전역 공간 에러 방지를 위해 하나로 묶은 초기 실행 함수
+    async function init() {
+        const lastY = localStorage.getItem('asteria_last_year');
+        const lastM = localStorage.getItem('asteria_last_month');
+        const lastDD = localStorage.getItem('asteria_last_d_day');
+        const lastTab = localStorage.getItem('asteria_last_tab');
+        const lastWeek = localStorage.getItem('asteria_last_week');
+        
+        if(lastY && lastM) {
+            currentYear = lastY;
+            currentMonth = lastM;
+            const ySel = document.getElementById('global-year-select');
+            const mSel = document.getElementById('global-month-select');
+            if(ySel) ySel.value = lastY;
+            if(mSel) mSel.value = lastM;
+        }
+        if(lastDD) {
+            selectedDailyDay = lastDD;
+        }
+        
+        await loadData(); 
 
-    if(lastTab) {
-        switchTab(lastTab);
+        if(lastTab) {
+            switchTab(lastTab);
+        }
+        if(lastWeek) {
+            switchWeek(lastWeek);
+        }
     }
-    if(lastWeek) {
-        switchWeek(lastWeek);
-    }
+
+    init();
 </script>
 </body>
 </html>
