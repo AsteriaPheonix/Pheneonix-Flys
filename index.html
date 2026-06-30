@@ -473,18 +473,18 @@
             </select>
             
             <select class="time-select" id="global-month-select" onchange="changeTimelineCycle()">
-                <option value="01">JANUARY CYCLE</option>
-                <option value="02">FEBRUARY CYCLE</option>
-                <option value="03">MARCH CYCLE</option>
-                <option value="04">APRIL CYCLE</option>
-                <option value="05">MAY CYCLE</option>
-                <option value="06">JUNE CYCLE</option>
-                <option value="07">JULY CYCLE</option>
-                <option value="08">AUGUST CYCLE</option>
-                <option value="09">SEPTEMBER CYCLE</option>
-                <option value="10">OCTOBER CYCLE</option>
-                <option value="11">NOVEMBER CYCLE</option>
-                <option value="12">DECEMBER CYCLE</option>
+                <option value="01">CICLO DE ENERO</option>
+                <option value="02">CICLO DE FEBRERO</option>
+                <option value="03">CICLO DE MARZO</option>
+                <option value="04">CICLO DE ABRIL</option>
+                <option value="05">CICLO DE MAYO</option>
+                <option value="06">CICLO DE JUNIO</option>
+                <option value="07">CICLO DE JULIO</option>
+                <option value="08">CICLO DE AGOSTO</option>
+                <option value="09">CICLO DE SEPTIEMBRE</option>
+                <option value="10">CICLO DE OCTUBRE</option>
+                <option value="11">CICLO DE NOVIEMBRE</option>
+                <option value="12">CICLO DE DICIEMBRE</option>
             </select>
         </div>
     </header>
@@ -518,11 +518,11 @@
 
     <div id="weekly" class="tab-content">
         <div class="week-sub-menu">
-            <button class="week-btn active" id="btn-week-1" onclick="switchWeek('1')">1ST WEEK</button>
-            <button class="week-btn" id="btn-week-2" onclick="switchWeek('2')">2ND WEEK</button>
-            <button class="week-btn" id="btn-week-3" onclick="switchWeek('3')">3RD WEEK</button>
-            <button class="week-btn" id="btn-week-4" onclick="switchWeek('4')">4TH WEEK</button>
-            <button class="week-btn" id="btn-week-5" onclick="switchWeek('5')">5TH WEEK</button>
+            <button class="week-btn active" id="btn-week-1" onclick="switchWeek('1')">1ª SEMANA</button>
+            <button class="week-btn" id="btn-week-2" onclick="switchWeek('2')">2ª SEMANA</button>
+            <button class="week-btn" id="btn-week-3" onclick="switchWeek('3')">3ª SEMANA</button>
+            <button class="week-btn" id="btn-week-4" onclick="switchWeek('4')">4ª SEMANA</button>
+            <button class="week-btn" id="btn-week-5" onclick="switchWeek('5')">5ª SEMANA</button>
         </div>
 
         <div class="grid-2">
@@ -571,7 +571,7 @@
             </div>
             <select class="inner-selector" id="daily-day-select" onchange="switchDailySlot()">
             </select>
-            <div class="weekday-display" id="daily-weekday-display">SUNDAY</div>
+            <div class="weekday-display" id="daily-weekday-display">DOMINGO</div>
         </div>
 
         <h3>REBIRTH CYCLE STATIONS</h3>
@@ -594,7 +594,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // 🌟 아스트리아님의 진짜 Firebase 정보 대입 완료!
     const firebaseConfig = {
         apiKey: "AIzaSyAGJ7_mn5R8wdQInyzk5NQVRlvGFFtCKiM",
         authDomain: "asteria-pad.firebaseapp.com",
@@ -615,7 +614,7 @@
     let currentWeek = "1"; 
     
     let selectedDailyDay = "01";
-    let selectedDailyWeek = "SUNDAY";
+    let selectedDailyWeek = "DOMINGO";
     
     const tempMemoryStates = {};
 
@@ -646,7 +645,8 @@
         const monthInt = parseInt(currentMonth);
         const dayInt = parseInt(selectedDailyDay);
         
-        const dayNames = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        // 요일 명칭 스페인어로 매핑
+        const dayNames = ["DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO"];
         const dateObj = new Date(yearInt, monthInt - 1, dayInt);
         
         selectedDailyWeek = dayNames[dateObj.getDay()];
@@ -665,7 +665,7 @@
         const activeBtn = document.getElementById(`btn-tab-${id}`);
         if (activeBtn) activeBtn.classList.add('active');
         
-        saveData();
+        window.saveData();
     }
 
     window.switchWeek = function(weekNum) {
@@ -675,14 +675,14 @@
         if (activeWeekBtn) activeWeekBtn.classList.add('active');
         
         loadWeeklyOnly();
-        saveData();
+        window.saveData();
     }
 
     window.switchDailySlot = function() {
         selectedDailyDay = document.getElementById('daily-day-select').value;
         updateAutoWeekday(); 
         loadDailyOnly();
-        saveData();
+        window.saveData();
     }
 
     window.saveData = function() {
@@ -783,6 +783,7 @@
 
     function rebuildOrbitCircle() {
         const orbit = document.getElementById('orbit-circle');
+        if (!orbit) return;
         orbit.querySelectorAll('.orbit-node').forEach(n => n.remove());
 
         const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
@@ -814,7 +815,7 @@
                 
                 plannerData.orbitStates[this.innerText] = s;
                 syncCalendarCell(this.innerText, s);
-                saveData();
+                window.saveData();
                 updateCoreText();
             });
 
@@ -822,29 +823,33 @@
         }
 
         const daySelect = document.getElementById('daily-day-select');
-        const prevValue = daySelect.value || selectedDailyDay;
-        daySelect.innerHTML = "";
-        for(let i=1; i<=daysInMonth; i++) {
-            const opt = document.createElement('option');
-            const txt = i < 10 ? '0' + i : i;
-            opt.value = txt;
-            opt.innerText = `DAY ${txt}`;
-            daySelect.appendChild(opt);
-        }
-        if(parseInt(prevValue) <= daysInMonth) {
-            daySelect.value = prevValue;
-            selectedDailyDay = prevValue;
-        } else {
-            daySelect.value = "01";
-            selectedDailyDay = "01";
+        if (daySelect) {
+            const prevValue = daySelect.value || selectedDailyDay;
+            daySelect.innerHTML = "";
+            for(let i=1; i<=daysInMonth; i++) {
+                const opt = document.createElement('option');
+                const txt = i < 10 ? '0' + i : i;
+                opt.value = txt;
+                opt.innerText = `DÍA ${txt}`;
+                daySelect.appendChild(opt);
+            }
+            if(parseInt(prevValue) <= daysInMonth) {
+                daySelect.value = prevValue;
+                selectedDailyDay = prevValue;
+            } else {
+                daySelect.value = "01";
+                selectedDailyDay = "01";
+            }
         }
     }
 
     function rebuildCalendarGrid() {
         const cal = document.getElementById('calendar-box');
+        if (!cal) return;
         cal.innerHTML = ""; 
 
-        const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+        // 요일 헤더 스페인어 변경 (DOM, LUN, MAR, MIÉ, JUE, VIE, SÁB)
+        const dayNames = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
         dayNames.forEach(name => {
             const headerCell = document.createElement('div');
             headerCell.className = 'calendar-day-header';
@@ -878,7 +883,7 @@
             input.id = `cal-input-${i}`;
             input.type = 'text';
             input.placeholder = '...';
-            input.addEventListener('input', saveData);
+            input.addEventListener('input', window.saveData);
             
             cell.appendChild(num);
             cell.appendChild(input);
@@ -910,7 +915,8 @@
 
         if(!savedData) {
             plannerData = createEmptyPlannerStructure();
-            document.getElementById('daily-day-select').value = selectedDailyDay;
+            const daySelect = document.getElementById('daily-day-select');
+            if(daySelect) daySelect.value = selectedDailyDay;
             updateAutoWeekday();
             loadDailyOnly();
             updateCoreText();
@@ -941,7 +947,8 @@
             if(inp && plannerData.calendarInputs[i]) inp.value = plannerData.calendarInputs[i];
         }
 
-        document.getElementById('daily-day-select').value = selectedDailyDay;
+        const daySelect = document.getElementById('daily-day-select');
+        if(daySelect) daySelect.value = selectedDailyDay;
         updateAutoWeekday();
         
         loadDailyOnly();
@@ -954,7 +961,7 @@
         currentYear = document.getElementById('global-year-select').value;
         currentMonth = document.getElementById('global-month-select').value;
         selectedDailyDay = "01";
-        loadData();
+        window.loadData();
     }
 
     window.toggleDot = function(el, idx) {
@@ -967,7 +974,7 @@
         } else {
             wData.routines[key] = wData.routines[key].filter(v => v !== idx);
         }
-        saveData();
+        window.saveData();
     }
 
     window.selectState = function(el) {
@@ -979,7 +986,7 @@
             plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
         }
         plannerData.matrixDailyData[matrixKey].chant = el.dataset.val;
-        saveData();
+        window.saveData();
     }
 
     function syncCalendarCell(dayNum, state) {
@@ -1032,11 +1039,10 @@
 
             localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
             set(ref(db, `asteria_save/${currentYear}/${currentMonth}`), plannerData);
-            loadData();
+            window.loadData();
         }
     }
 
-    // 🌟 전역 안전 실행용 초기 함수 묶음
     async function init() {
         const lastY = localStorage.getItem('asteria_last_year');
         const lastM = localStorage.getItem('asteria_last_month');
@@ -1056,13 +1062,13 @@
             selectedDailyDay = lastDD;
         }
         
-        await loadData(); 
+        await window.loadData(); 
 
         if(lastTab) {
-            switchTab(lastTab);
+            window.switchTab(lastTab);
         }
         if(lastWeek) {
-            switchWeek(lastWeek);
+            window.switchWeek(lastWeek);
         }
     }
 
