@@ -674,7 +674,6 @@
         if (activeWeekBtn) activeWeekBtn.classList.add('active');
         
         loadWeeklyOnly();
-        window.saveData();
     }
 
     window.switchDailySlot = function() {
@@ -699,7 +698,7 @@
         }
         plannerData.weeklyData[currentWeek].quests = document.getElementById('text-weekly-quests').value;
 
-        // 루틴(dot) active 체크 상태 실시간 연동 수집
+        // 루틴 상태 저장 고도화 및 검증
         const routineRows = document.querySelectorAll('[data-routine]');
         routineRows.forEach(row => {
             const routineKey = row.dataset.routine;
@@ -710,6 +709,9 @@
                     activeIndices.push(index);
                 }
             });
+            if (!plannerData.weeklyData[currentWeek].routines) {
+                plannerData.weeklyData[currentWeek].routines = {};
+            }
             plannerData.weeklyData[currentWeek].routines[routineKey] = activeIndices;
         });
 
@@ -769,17 +771,23 @@
     }
 
     function loadWeeklyOnly() {
+        if (!plannerData.weeklyData[currentWeek]) {
+            plannerData.weeklyData[currentWeek] = { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" };
+        }
         const wData = plannerData.weeklyData[currentWeek];
         document.getElementById('text-weekly-quests').value = wData.quests || "";
         
         document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
-        for(let key in wData.routines) {
-            const row = document.querySelector(`[data-routine="${key}"]`);
-            if(row) {
-                const dots = row.querySelectorAll('.dot');
-                wData.routines[key].forEach(idx => {
-                    if(dots[idx]) dots[idx].classList.add('active');
-                });
+        if (wData.routines) {
+            for(let key in wData.routines) {
+                const row = document.querySelector(`[data-routine="${key}"]`);
+                if(row) {
+                    const dots = row.querySelectorAll('.dot');
+                    const indices = wData.routines[key] || [];
+                    indices.forEach(idx => {
+                        if(dots[idx]) dots[idx].classList.add('active');
+                    });
+                }
             }
         }
     }
@@ -980,8 +988,28 @@
         window.loadData();
     }
 
+    // ✨ [수정] 토글 시 즉시 상태 구조를 갱신하고 강제 실시간 저장을 호출하도록 개편
     window.toggleDot = function(el, idx) {
         el.classList.toggle('active');
+        
+        const row = el.closest('[data-routine]');
+        if (row) {
+            const key = row.dataset.routine;
+            if (!plannerData.weeklyData[currentWeek]) {
+                plannerData.weeklyData[currentWeek] = { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" };
+            }
+            if (!plannerData.weeklyData[currentWeek].routines) {
+                plannerData.weeklyData[currentWeek].routines = { hearth: [], chiron: [], embers: [], phoenix: [] };
+            }
+            
+            const activeIndices = [];
+            row.querySelectorAll('.dot').forEach((d, i) => {
+                if (d.classList.contains('active')) {
+                    activeIndices.push(i);
+                }
+            });
+            plannerData.weeklyData[currentWeek].routines[key] = activeIndices;
+        }
         window.saveData();
     }
 
