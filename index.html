@@ -645,7 +645,6 @@
         const monthInt = parseInt(currentMonth);
         const dayInt = parseInt(selectedDailyDay);
         
-        // 요일 명칭 스페인어로 매핑
         const dayNames = ["DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO"];
         const dateObj = new Date(yearInt, monthInt - 1, dayInt);
         
@@ -694,7 +693,25 @@
             plannerData.matrixDailyData[matrixKey] = createEmptyDailyObject();
         }
         plannerData.matrixDailyData[matrixKey].journal = document.getElementById('text-daily-journal').value;
+        
+        if (!plannerData.weeklyData[currentWeek]) {
+            plannerData.weeklyData[currentWeek] = { routines: { hearth: [], chiron: [], embers: [], phoenix: [] }, quests: "" };
+        }
         plannerData.weeklyData[currentWeek].quests = document.getElementById('text-weekly-quests').value;
+
+        // 루틴(dot) active 체크 상태 실시간 연동 수집
+        const routineRows = document.querySelectorAll('[data-routine]');
+        routineRows.forEach(row => {
+            const routineKey = row.dataset.routine;
+            const activeIndices = [];
+            const dots = row.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (dot.classList.contains('active')) {
+                    activeIndices.push(index);
+                }
+            });
+            plannerData.weeklyData[currentWeek].routines[routineKey] = activeIndices;
+        });
 
         const daysInMonth = new Date(parseInt(currentYear), parseInt(currentMonth), 0).getDate();
         for(let i=1; i<=daysInMonth; i++) {
@@ -848,7 +865,6 @@
         if (!cal) return;
         cal.innerHTML = ""; 
 
-        // 요일 헤더 스페인어 변경 (DOM, LUN, MAR, MIÉ, JUE, VIE, SÁB)
         const dayNames = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
         dayNames.forEach(name => {
             const headerCell = document.createElement('div');
@@ -966,14 +982,6 @@
 
     window.toggleDot = function(el, idx) {
         el.classList.toggle('active');
-        const key = el.parentElement.dataset.routine;
-        const wData = plannerData.weeklyData[currentWeek];
-        
-        if(el.classList.contains('active')) {
-            if(!wData.routines[key].includes(idx)) wData.routines[key].push(idx);
-        } else {
-            wData.routines[key] = wData.routines[key].filter(v => v !== idx);
-        }
         window.saveData();
     }
 
