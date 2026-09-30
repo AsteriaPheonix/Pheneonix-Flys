@@ -428,6 +428,152 @@
             background: #0a0d14;
         }
 
+        /* 🏛️ REBIRTH LOGS 전용 스타일 */
+        .logs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .scope-sub-menu {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .scope-btn {
+            background: #040609;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 18px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .scope-btn.active, .scope-btn:hover {
+            color: var(--flame-gold);
+            border-color: var(--flame-gold);
+            background: rgba(255, 165, 0, 0.03);
+        }
+        .stat-card {
+            background: #040609;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 2px;
+        }
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-title {
+            font-family: 'Cinzel', serif;
+            color: var(--flame-gold);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            color: var(--flame-orange);
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 69, 0, 0.2);
+        }
+        .title-badge {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: #b2bfc8;
+            margin-top: 5px;
+        }
+        .flame-bar-wrapper {
+            height: 18px;
+            width: 100%;
+            background: #080a0f;
+            border: 1px solid var(--border-color);
+            display: flex;
+            overflow: hidden;
+            border-radius: 2px;
+            margin: 12px 0;
+        }
+        .bar-segment {
+            height: 100%;
+            transition: width 0.5s ease-in-out;
+        }
+        .bar-ash { background: var(--ash-gray); }
+        .bar-spark { background: var(--flame-gold); }
+        .bar-burn { background: var(--flame-orange); }
+
+        .stat-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .streak-box {
+            text-align: center;
+            padding: 15px;
+            background: #080a0f;
+            border: 1px solid var(--border-color);
+        }
+        .streak-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--flame-gold);
+            margin-top: 5px;
+        }
+
+        .training-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(20, 27, 38, 0.6);
+            font-size: 0.9rem;
+        }
+        .training-stat-pct {
+            font-family: 'Cinzel', serif;
+            color: var(--flame-orange);
+        }
+
+        .insight-quote {
+            font-style: italic;
+            color: #b2bfc8;
+            text-align: center;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 69, 0, 0.01);
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .yearly-heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .heatmap-month-cell {
+            background: #080a0f;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+        }
+        .heatmap-month-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .heatmap-month-val {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--flame-gold);
+            margin-top: 4px;
+        }
+
         .system-footer {
             margin-top: 35px;
             border-top: 1px dashed var(--border-color);
@@ -460,7 +606,7 @@
 <div class="planner-container">
     <header>
         <h1 class="main-title">ΣΠΟΔΟΣ</h1>
-        <div class="sub-title"><span class="greek-script">Ἐκ Σ포δοῦ</span>: Asteria's Ash-Stained Ledger</div>
+        <div class="sub-title"><span class="greek-script">Ἐκ Σποδοῦ</span>: Asteria's Ash-Stained Ledger</div>
         <div class="quote">“Ash is not the end of life; it is the cradle where the next immortal form awakens.”</div>
         
         <div class="time-selector-wrapper">
@@ -469,7 +615,7 @@
                 <option value="2027">2027 PHOENIX</option>
                 <option value="2028">2028 PHOENIX</option>
                 <option value="2029">2029 PHOENIX</option>
-                <option value="2030">2030 PHOENIX</option>
+                <option value="3000">2030 PHOENIX</option>
             </select>
             
             <select class="time-select" id="global-month-select" onchange="changeTimelineCycle()">
@@ -493,8 +639,10 @@
         <button class="tab-btn active" id="btn-tab-monthly" onclick="switchTab('monthly')">MONTHLY</button>
         <button class="tab-btn" id="btn-tab-weekly" onclick="switchTab('weekly')">WEEKLY</button>
         <button class="tab-btn" id="btn-tab-daily" onclick="switchTab('daily')">DAILY</button>
+        <button class="tab-btn" id="btn-tab-logs" onclick="switchTab('logs')">REBIRTH LOGS</button>
     </div>
 
+    <!-- MONTHLY TAB -->
     <div id="monthly" class="tab-content active">
         <div class="monthly-top-flow">
             <div class="rebirth-orbit" id="orbit-circle">
@@ -516,6 +664,7 @@
         </div>
     </div>
 
+    <!-- WEEKLY TAB -->
     <div id="weekly" class="tab-content">
         <div class="week-sub-menu">
             <button class="week-btn active" id="btn-week-1" onclick="switchWeek('1')">1ª SEMANA</button>
@@ -564,6 +713,7 @@
         </div>
     </div>
 
+    <!-- DAILY TAB -->
     <div id="daily" class="tab-content">
         <div class="daily-control-panel">
             <div class="daily-indicator-text">
@@ -583,6 +733,88 @@
 
         <h3>ASHES RECALLED</h3>
         <textarea id="text-daily-journal" oninput="saveData()" class="journal-area" placeholder="Write down what you must never forget before the world fades into oblivion..."></textarea>
+    </div>
+
+    <!-- 🏛️ REBIRTH LOGS TAB -->
+    <div id="logs" class="tab-content">
+        <div class="scope-sub-menu">
+            <button class="scope-btn active" id="btn-scope-month" onclick="switchLogScope('month')">MONTHLY CYCLE</button>
+            <button class="scope-btn" id="btn-scope-year" onclick="switchLogScope('year')">ANNUAL PHOENIX</button>
+        </div>
+
+        <div class="logs-container">
+            <!-- 1. 부활 지수 & 칭호 카드 -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title" id="log-index-title">IGNITION LEVEL (OCTUBRE)</span>
+                    <span class="stat-value" id="log-index-pct">0%</span>
+                </div>
+                <div class="title-badge" id="log-fated-title">Fated Title: -</div>
+            </div>
+
+            <!-- 2. 불꽃 조성 게이지 -->
+            <div class="stat-card">
+                <h3>FLAME COMPOSITION</h3>
+                <div class="flame-bar-wrapper">
+                    <div class="bar-segment bar-ash" id="bar-ash" style="width: 0%;"></div>
+                    <div class="bar-segment bar-spark" id="bar-spark" style="width: 0%;"></div>
+                    <div class="bar-segment bar-burn" id="bar-burn" style="width: 0%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #b2bfc8;">
+                    <span>🌑 Ash: <strong id="cnt-ash">0일</strong></span>
+                    <span>✨ Spark: <strong id="cnt-spark">0일</strong></span>
+                    <span>🔥 Flame: <strong id="cnt-burn">0일</strong></span>
+                </div>
+            </div>
+
+            <!-- 3. 스트릭 & 훈련 완수율 -->
+            <div class="stat-grid-2">
+                <div class="stat-card">
+                    <h3>FLAME PERSISTENCE</h3>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="streak-box" style="flex: 1;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">ETERNAL SPARK</div>
+                            <div class="streak-num" id="stat-current-streak">0d</div>
+                        </div>
+                        <div class="streak-box" style="flex: 1;">
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">PEAK CONFLAGRATION</div>
+                            <div class="streak-num" id="stat-longest-streak">0d</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>TRAINING COMMAND SUMMARY</h3>
+                    <div class="training-stat-row">
+                        <span>🏛️ Keeper of the Hearth</span>
+                        <span class="training-stat-pct" id="pct-hearth">0%</span>
+                    </div>
+                    <div class="training-stat-row">
+                        <span>🏹 Chiron's Academic Drills</span>
+                        <span class="training-stat-pct" id="pct-chiron">0%</span>
+                    </div>
+                    <div class="training-stat-row">
+                        <span>🪕 Tuning the Embers</span>
+                        <span class="training-stat-pct" id="pct-embers">0%</span>
+                    </div>
+                    <div class="training-stat-row">
+                        <span>🌫️ Whispers of the Phoenix</span>
+                        <span class="training-stat-pct" id="pct-phoenix">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 연간 히트맵 (연간 뷰 선택 시 표시) -->
+            <div class="stat-card" id="yearly-heatmap-box" style="display: none;">
+                <h3>2026 MONTHLY FLAME HEATMAP</h3>
+                <div class="yearly-heatmap-grid" id="yearly-heatmap-container"></div>
+            </div>
+
+            <!-- 5. 불사조의 총평 -->
+            <div class="insight-quote" id="log-phoenix-insight">
+                “Ash is not the end of life; it is the cradle where the next immortal form awakens.”
+            </div>
+        </div>
     </div>
 
     <div class="system-footer">
@@ -615,6 +847,7 @@
     
     let selectedDailyDay = "01";
     let selectedDailyWeek = "DOMINGO";
+    let logScope = "month"; // 'month' or 'year'
     
     const tempMemoryStates = {};
 
@@ -664,7 +897,20 @@
         const activeBtn = document.getElementById(`btn-tab-${id}`);
         if (activeBtn) activeBtn.classList.add('active');
         
+        if (id === 'logs') {
+            renderRebirthLogs();
+        }
+        
         window.saveData();
+    }
+
+    window.switchLogScope = function(scope) {
+        logScope = scope;
+        document.querySelectorAll('.scope-btn').forEach(b => b.classList.remove('active'));
+        const activeScopeBtn = document.getElementById(`btn-scope-${scope}`);
+        if (activeScopeBtn) activeScopeBtn.classList.add('active');
+        
+        renderRebirthLogs();
     }
 
     window.switchWeek = function(weekNum) {
@@ -724,7 +970,6 @@
             if(inp) plannerData.calendarInputs[i] = inp.value;
         }
 
-        // 1. 브라우저 내 저장 (로컬 보장)
         localStorage.setItem(`asteria_save_${currentYear}_${currentMonth}`, JSON.stringify(plannerData));
         localStorage.setItem('asteria_last_year', currentYear);
         localStorage.setItem('asteria_last_month', currentMonth);
@@ -732,7 +977,6 @@
         localStorage.setItem('asteria_last_tab', currentTab);
         localStorage.setItem('asteria_last_week', currentWeek);
 
-        // 2. Firebase 원격 저장 (안전 키 경로사용)
         try {
             set(ref(db, `asteria_save/${currentYear}/m_${currentMonth}`), plannerData);
         } catch(e) {
@@ -941,6 +1185,172 @@
         }
     }
 
+    // 🏛️ REBIRTH LOGS 데이터 연산 및 통계 렌더링
+    function renderRebirthLogs() {
+        const heatmapBox = document.getElementById('yearly-heatmap-box');
+        
+        if (logScope === 'month') {
+            if (heatmapBox) heatmapBox.style.display = 'none';
+            document.getElementById('log-index-title').innerText = `IGNITION LEVEL (${currentYear} / ${currentMonth})`;
+            
+            const daysInMonth = new Date(parseInt(currentYear, 10), parseInt(currentMonth, 10), 0).getDate();
+            let scoreSum = 0;
+            let ashCnt = 0, sparkCnt = 0, burnCnt = 0;
+            
+            let curStreak = 0, maxStreak = 0;
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const st = parseInt((plannerData.orbitStates && plannerData.orbitStates[i]) || 0, 10);
+                scoreSum += st;
+                if (st === 1) ashCnt++;
+                else if (st === 2) sparkCnt++;
+                else if (st === 3) burnCnt++;
+                
+                if (st >= 2) {
+                    curStreak++;
+                    if (curStreak > maxStreak) maxStreak = curStreak;
+                } else {
+                    curStreak = 0;
+                }
+            }
+            
+            const maxScore = daysInMonth * 3;
+            const pct = Math.round((scoreSum / maxScore) * 100) || 0;
+            
+            document.getElementById('log-index-pct').innerText = `${pct}%`;
+            
+            // 헤스티아 / 퍼시잭슨 계열 칭호 지정
+            let titleStr = "";
+            let insightStr = "";
+            if (pct >= 95) {
+                titleStr = "Fated Title: 🏛️ Keeper of the Last Hearth (마지막 화로의 파수꾼)";
+                insightStr = "“올림포스의 화로가 모두 식어도 끝까지 불씨를 지켜낸 자. 신들조차 잊어버린 고대의 기억 속에서 당신만은 완전한 부활을 이루어냈습니다.”";
+            } else if (pct >= 80) {
+                titleStr = "Fated Title: ✨ Chosen of Hestia (헤스티아의 선택을 받은 자)";
+                insightStr = "“소란스러운 승리의 불꽃 대신 조용히 꺼지지 않는 정결한 불씨를 안은 자. 재가 되어 스러지는 기억 속에서도 가장 고귀한 신념을 지켜냈습니다.”";
+            } else if (pct >= 60) {
+                titleStr = "Fated Title: 🌫️ Wanderer of the Lethe Embers (레테의 잔불을 거니는 방랑자)";
+                insightStr = "“망각의 강 가에 불씨를 떨어뜨리며 거듭 부활하는 영혼. 잃어버린 기억의 조각만큼이나 뜨거운 잿더미를 가슴에 품고 있습니다.”";
+            } else if (pct >= 35) {
+                titleStr = "Fated Title: 🌑 Fading Echo of Ashes (재 속에 희미해지는 메아리)";
+                insightStr = "“불꽃은 점차 잦아들고, 태워버린 날들보다 잊혀진 기억이 더 많아진 상태. 하지만 깊은 잿더미 밑바닥에는 아직 살아있는 불씨가 숨쉬고 있습니다.”";
+            } else {
+                titleStr = "Fated Title: 💤 Dormant Ember in Oblivion (망각 속에 잠든 불씨)";
+                insightStr = "“아직 정적과 망각 속에 고요히 잠겨있는 상태. 다음 주기의 불꽃이 이 차가운 재를 다시 깨우기를 기다리고 있습니다.”";
+            }
+            
+            document.getElementById('log-fated-title').innerText = titleStr;
+            document.getElementById('log-phoenix-insight').innerText = insightStr;
+            
+            // 비율 게이지 계산
+            const ashPct = Math.round((ashCnt / daysInMonth) * 100);
+            const sparkPct = Math.round((sparkCnt / daysInMonth) * 100);
+            const burnPct = Math.round((burnCnt / daysInMonth) * 100);
+            
+            document.getElementById('bar-ash').style.width = `${ashPct}%`;
+            document.getElementById('bar-spark').style.width = `${sparkPct}%`;
+            document.getElementById('bar-burn').style.width = `${burnPct}%`;
+            
+            document.getElementById('cnt-ash').innerText = `${ashCnt}일 (${ashPct}%)`;
+            document.getElementById('cnt-spark').innerText = `${sparkCnt}일 (${sparkPct}%)`;
+            document.getElementById('cnt-burn').innerText = `${burnCnt}일 (${burnPct}%)`;
+            
+            document.getElementById('stat-current-streak').innerText = `${curStreak}d`;
+            document.getElementById('stat-longest-streak').innerText = `${maxStreak}d`;
+            
+            // Weekly Training 요약 연산
+            renderWeeklyTrainingStats();
+
+        } else {
+            // YEARLY SCOPE
+            if (heatmapBox) heatmapBox.style.display = 'block';
+            document.getElementById('log-index-title').innerText = `ANNUAL PHOENIX (${currentYear})`;
+            
+            let totalYearScore = 0;
+            let totalYearMax = 365 * 3;
+            let yearAsh = 0, yearSpark = 0, yearBurn = 0;
+            
+            const heatmapContainer = document.getElementById('yearly-heatmap-container');
+            if (heatmapContainer) heatmapContainer.innerHTML = "";
+            
+            for (let m = 1; m <= 12; m++) {
+                const mStr = m < 10 ? `0${m}` : `${m}`;
+                const saved = localStorage.getItem(`asteria_save_${currentYear}_${mStr}`);
+                let mData = saved ? JSON.parse(saved) : null;
+                let mScore = 0;
+                const mDays = new Date(parseInt(currentYear, 10), m, 0).getDate();
+                
+                if (mData && mData.orbitStates) {
+                    for (let d = 1; d <= mDays; d++) {
+                        const st = parseInt(mData.orbitStates[d] || 0, 10);
+                        mScore += st;
+                        if (st === 1) yearAsh++;
+                        else if (st === 2) yearSpark++;
+                        else if (st === 3) yearBurn++;
+                    }
+                }
+                
+                totalYearScore += mScore;
+                const mPct = Math.round((mScore / (mDays * 3)) * 100) || 0;
+                
+                if (heatmapContainer) {
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-month-cell';
+                    cell.innerHTML = `
+                        <div class="heatmap-month-title">${m}월</div>
+                        <div class="heatmap-month-val">${mPct}%</div>
+                    `;
+                    heatmapContainer.appendChild(cell);
+                }
+            }
+            
+            const yearPct = Math.round((totalYearScore / totalYearMax) * 100) || 0;
+            document.getElementById('log-index-pct').innerText = `${yearPct}%`;
+            
+            let yearTitle = "";
+            if (yearPct >= 85) yearTitle = "Annual Legend: 🦅 Promethean Legacy (프로메테우스의 유산)";
+            else if (yearPct >= 65) yearTitle = "Annual Legend: 🔥 Lord of Eternal Flames (영원한 불꽃의 군주)";
+            else yearTitle = "Annual Legend: 🌫️ Echoes of Rebirth (부활의 메아리)";
+            
+            document.getElementById('log-fated-title').innerText = yearTitle;
+            document.getElementById('log-phoenix-insight').innerText = "“365일의 시간 동안 스러지고 피어난 불꽃의 궤적이 2026년의 위대한 유산으로 각인되었습니다.”";
+            
+            const ashPct = Math.round((yearAsh / 365) * 100);
+            const sparkPct = Math.round((yearSpark / 365) * 100);
+            const burnPct = Math.round((yearBurn / 365) * 100);
+            
+            document.getElementById('bar-ash').style.width = `${ashPct}%`;
+            document.getElementById('bar-spark').style.width = `${sparkPct}%`;
+            document.getElementById('bar-burn').style.width = `${burnPct}%`;
+            
+            document.getElementById('cnt-ash').innerText = `${yearAsh}일`;
+            document.getElementById('cnt-spark').innerText = `${yearSpark}일`;
+            document.getElementById('cnt-burn').innerText = `${yearBurn}일`;
+            
+            renderWeeklyTrainingStats();
+        }
+    }
+
+    function renderWeeklyTrainingStats() {
+        const keys = ['hearth', 'chiron', 'embers', 'phoenix'];
+        keys.forEach(k => {
+            let activeDots = 0;
+            let totalDots = 35; // 5주 x 7일
+            
+            if (plannerData.weeklyData) {
+                for (let w = 1; w <= 5; w++) {
+                    const wData = plannerData.weeklyData[`${w}`];
+                    if (wData && wData.routines && wData.routines[k]) {
+                        activeDots += wData.routines[k].length;
+                    }
+                }
+            }
+            const pct = Math.round((activeDots / totalDots) * 100) || 0;
+            const el = document.getElementById(`pct-${k}`);
+            if (el) el.innerText = `${pct}%`;
+        });
+    }
+
     window.loadData = async function() {
         clearUI();
         rebuildOrbitCircle(); 
@@ -1005,6 +1415,10 @@
         loadDailyOnly();
         loadWeeklyOnly();
         updateCoreText();
+        
+        if (currentTab === 'logs') {
+            renderRebirthLogs();
+        }
     }
 
     window.changeTimelineCycle = function() {
