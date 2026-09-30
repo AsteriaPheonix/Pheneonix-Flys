@@ -484,11 +484,11 @@
             text-shadow: 0 0 10px rgba(255, 69, 0, 0.2);
         }
         .title-badge {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
+            font-family: 'Cinzel', serif;
             font-size: 1.15rem;
-            color: #b2bfc8;
+            color: var(--flame-gold);
             margin-top: 5px;
+            letter-spacing: 1px;
         }
         .flame-bar-wrapper {
             height: 18px;
@@ -543,11 +543,12 @@
             font-style: italic;
             color: #b2bfc8;
             text-align: center;
-            padding: 15px;
+            padding: 18px;
             border: 1px dashed var(--border-color);
             background: rgba(255, 69, 0, 0.01);
             font-size: 0.95rem;
             margin-top: 5px;
+            line-height: 1.6;
         }
 
         .yearly-heatmap-grid {
@@ -615,7 +616,7 @@
                 <option value="2027">2027 PHOENIX</option>
                 <option value="2028">2028 PHOENIX</option>
                 <option value="2029">2029 PHOENIX</option>
-                <option value="3000">2030 PHOENIX</option>
+                <option value="2030">2030 PHOENIX</option>
             </select>
             
             <select class="time-select" id="global-month-select" onchange="changeTimelineCycle()">
@@ -1185,7 +1186,7 @@
         }
     }
 
-    // 🏛️ REBIRTH LOGS 데이터 연산 및 통계 렌더링
+    // 🏛️ REBIRTH LOGS 데이터 연산 및 통계 렌더링 (영문 칭호 + 이모티콘)
     function renderRebirthLogs() {
         const heatmapBox = document.getElementById('yearly-heatmap-box');
         
@@ -1219,30 +1220,30 @@
             
             document.getElementById('log-index-pct').innerText = `${pct}%`;
             
-            // 헤스티아 / 퍼시잭슨 계열 칭호 지정
+            // 영문 칭호 & 귀여운 이모티콘 조합
             let titleStr = "";
             let insightStr = "";
             if (pct >= 95) {
-                titleStr = "Fated Title: 🏛️ Keeper of the Last Hearth (마지막 화로의 파수꾼)";
-                insightStr = "“올림포스의 화로가 모두 식어도 끝까지 불씨를 지켜낸 자. 신들조차 잊어버린 고대의 기억 속에서 당신만은 완전한 부활을 이루어냈습니다.”";
+                titleStr = "Fated Title: 🏛️ Keeper of the Last Hearth";
+                insightStr = "“Even when every hearth on Olympus fades, you keep the sacred ember alive. Amidst the ancient memories forgotten by the gods themselves, you have achieved absolute rebirth.”";
             } else if (pct >= 80) {
-                titleStr = "Fated Title: ✨ Chosen of Hestia (헤스티아의 선택을 받은 자)";
-                insightStr = "“소란스러운 승리의 불꽃 대신 조용히 꺼지지 않는 정결한 불씨를 안은 자. 재가 되어 스러지는 기억 속에서도 가장 고귀한 신념을 지켜냈습니다.”";
+                titleStr = "Fated Title: ✨ Chosen of Hestia";
+                insightStr = "“You hold the quiet, unyielding flame rather than the clamor of transient victory. Through the ash of fading memories, you have preserved the most sacred conviction.”";
             } else if (pct >= 60) {
-                titleStr = "Fated Title: 🌫️ Wanderer of the Lethe Embers (레테의 잔불을 거니는 방랑자)";
-                insightStr = "“망각의 강 가에 불씨를 떨어뜨리며 거듭 부활하는 영혼. 잃어버린 기억의 조각만큼이나 뜨거운 잿더미를 가슴에 품고 있습니다.”";
+                titleStr = "Fated Title: 🌫️ Wanderer of the Lethe Embers";
+                insightStr = "“A soul reborn time and again, scattering sparks along the banks of the River Lethe. You carry within your chest a hearth as burning as the fragments of lost memory.”";
             } else if (pct >= 35) {
-                titleStr = "Fated Title: 🌑 Fading Echo of Ashes (재 속에 희미해지는 메아리)";
-                insightStr = "“불꽃은 점차 잦아들고, 태워버린 날들보다 잊혀진 기억이 더 많아진 상태. 하지만 깊은 잿더미 밑바닥에는 아직 살아있는 불씨가 숨쉬고 있습니다.”";
+                titleStr = "Fated Title: 🌑 Fading Echo of Ashes";
+                insightStr = "“The fire begins to ebb, with more memories consigned to oblivion than days burned away. Yet deep beneath the cold ash, a living spark still whispers.”";
             } else {
-                titleStr = "Fated Title: 💤 Dormant Ember in Oblivion (망각 속에 잠든 불씨)";
-                insightStr = "“아직 정적과 망각 속에 고요히 잠겨있는 상태. 다음 주기의 불꽃이 이 차가운 재를 다시 깨우기를 기다리고 있습니다.”";
+                titleStr = "Fated Title: 💤 Dormant Ember in Oblivion";
+                insightStr = "“Slumbering in silence and forgetfulness. Waiting for the flame of the next cycle to awaken the cold ash once more.”";
             }
             
             document.getElementById('log-fated-title').innerText = titleStr;
             document.getElementById('log-phoenix-insight').innerText = insightStr;
             
-            // 비율 게이지 계산
+            // 비율 게이지 연산
             const ashPct = Math.round((ashCnt / daysInMonth) * 100);
             const sparkPct = Math.round((sparkCnt / daysInMonth) * 100);
             const burnPct = Math.round((burnCnt / daysInMonth) * 100);
@@ -1258,7 +1259,6 @@
             document.getElementById('stat-current-streak').innerText = `${curStreak}d`;
             document.getElementById('stat-longest-streak').innerText = `${maxStreak}d`;
             
-            // Weekly Training 요약 연산
             renderWeeklyTrainingStats();
 
         } else {
@@ -1308,12 +1308,20 @@
             document.getElementById('log-index-pct').innerText = `${yearPct}%`;
             
             let yearTitle = "";
-            if (yearPct >= 85) yearTitle = "Annual Legend: 🦅 Promethean Legacy (프로메테우스의 유산)";
-            else if (yearPct >= 65) yearTitle = "Annual Legend: 🔥 Lord of Eternal Flames (영원한 불꽃의 군주)";
-            else yearTitle = "Annual Legend: 🌫️ Echoes of Rebirth (부활의 메아리)";
+            let yearInsight = "";
+            if (yearPct >= 85) {
+                yearTitle = "Annual Title: 🦅 Keeper of the Everlasting Hearth";
+                yearInsight = "“Throughout the turning of three hundred and sixty-five days, you guarded the sacred flame without faltering. The hearth remains warm, inscribed as an eternal legacy of resilience.”";
+            } else if (yearPct >= 65) {
+                yearTitle = "Annual Title: 🔥 Vessel of the Sacred Fire";
+                yearInsight = "“Through seasons of burning and cycles of fading into ash, you remained a steadfast sanctuary for the embers. The flame within you never truly died.”";
+            } else {
+                yearTitle = "Annual Title: 🕊️ Echoes of Rebirth";
+                yearInsight = "“A year traced by quiet sparks and scattered ashes. Though many memories have dissolved into the river of time, the foundation for the next awakening is laid.”";
+            }
             
             document.getElementById('log-fated-title').innerText = yearTitle;
-            document.getElementById('log-phoenix-insight').innerText = "“365일의 시간 동안 스러지고 피어난 불꽃의 궤적이 2026년의 위대한 유산으로 각인되었습니다.”";
+            document.getElementById('log-phoenix-insight').innerText = yearInsight;
             
             const ashPct = Math.round((yearAsh / 365) * 100);
             const sparkPct = Math.round((yearSpark / 365) * 100);
